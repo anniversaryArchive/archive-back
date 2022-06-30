@@ -1,4 +1,5 @@
 const express = require('express');
+const dbConfig = require('./config/db-config.json')
 const mongoose = require('mongoose')
 
 const app = express();
@@ -12,7 +13,7 @@ const url = 'mongodb+srv://<id>:<password>@archive.esqyg.mongodb.net/Archive?ret
 app.use('/', indexRouter);
 app.use('/archive', archiveRouter);
 
-
+const url = `mongodb+srv://${dbConfig.user}:${dbConfig.password}@archive.esqyg.mongodb.net/${dbConfig.database}?retryWrites=true&w=majority`;
 mongoose.connect(url).then(() => {
       console.log("MongoDB Connect")
   }).catch((err) => {

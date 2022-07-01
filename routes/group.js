@@ -24,7 +24,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     const group = await new Group(req.body).save();
-    res.json({ success: true, group });
+    res.json({ success: true, data: group });
   } catch (error) {
     res.json({ success: false, error });
   }

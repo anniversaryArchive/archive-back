@@ -1,9 +1,14 @@
 const express = require('express');
-const dbConfig = require('./config/db-config.json')
-const mongoose = require('mongoose')
+const dbConfig = require('./config/db-config.json');
+const mongoose = require('mongoose');
+const { ApolloServer } = require('apollo-server');
 
 const app = express();
 const port = 3000;
+
+
+const typeDefs = require('./typeDefs/schema.js');
+const resolvers = require('./resolvers');
 
 const indexRouter = require('./routes/index');
 const archiveRouter = require('./routes/archive');
@@ -23,4 +28,14 @@ mongoose.connect(url).then(() => {
   
   app.listen(port, () => {
       console.log("Server is Connect!");
+  });
+  
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    playground: true
+  });
+  
+  server.listen().then(({ url }) => {
+    console.log(`🚀 Server ready at ${url}`);
   });

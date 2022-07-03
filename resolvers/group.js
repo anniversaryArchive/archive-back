@@ -51,7 +51,7 @@ const groupResolvers = {
         if (artists && artists.length) {
           artists.forEach((artist) => {
             // 개인 데뷔 일자가 없는 경우, 그룹의 데뷔 일자로 넣어줍니다.
-            if (!debutDate) { artist.debutDate = debutDate }
+            if (!artist.debutDate) { artist.debutDate = debutDate }
             artist.group = id;
           });
           Artist.insertMany(artists);

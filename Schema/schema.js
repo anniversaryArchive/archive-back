@@ -6,6 +6,7 @@ const typeDefs = gql`
   }
   type Group{
     _id: ID
+    name: String
     artists: [String]
     debutDate: Date
   }

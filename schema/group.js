@@ -13,9 +13,14 @@ const groupTypeDefs = gql`
     artists: [Artist]
     debutDate: Date
   }
+  input ArtistInput {
+    name: String!
+    birthDay: Date!
+  }
   input createGroupInput {
     name: String!
     debutDate: Date!
+    artists: [ArtistInput]
   }
   input updateGroupInput {
     name: String

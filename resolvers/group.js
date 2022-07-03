@@ -36,9 +36,20 @@ const groupResolvers = {
   Mutation: {
     async createGroup (_, args) {
       try {
+        const { artists, debutDate } = args.input;
+        delete args.input.artists;
         const group = new Group({ ... args.input });
         const result = await group.save();
-        return result;
+        const id = result._id;
+
+        if (artists && artists.length) {
+          artists.forEach((artist) => {
+            artist.debutDate = debutDate
+            artist.group = id;
+          });
+          Artist.insertMany(artists);
+        }
+        return await Group.findOne({ _id: id });
       } catch (error) {
         console.log(error);
         throw error;

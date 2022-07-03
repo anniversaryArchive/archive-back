@@ -3,8 +3,8 @@ const { ApolloServer } = require('apollo-server');
 
 const app = express();
 
-const typeDefs = require('./typeDefs/schema.js');
-const resolvers = require('./resolvers');
+const typeDefs = require('./Schema/schema');
+const resolvers = require('./resolvers/resolver');
 
 const dbConnect = require('./mongodb/mongodb');
 
@@ -25,5 +25,5 @@ const server = new ApolloServer({
 });
 
 server.listen().then(({ url }) => {
-    console.log(`🚀 Server ready at ${url}`);
+    console.log(`Server : ${url}`);
 });

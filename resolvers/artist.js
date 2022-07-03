@@ -46,7 +46,8 @@ const artistResolvers = {
     },
     async updateArtist (_, args) {
       try {
-        await Artist.updateOne({ _id: args.id }, { $set: { ... args.input, updatedAt: Date.now() } });
+        const updateDoc = { $set: { ... args.input, updatedAt: Date.now() } };
+        await Artist.updateOne({ _id: args.id }, updateDoc);
         const artist = await Artist.findOne({ _id: args.id });
         return artist;
       } catch (error) {
@@ -56,7 +57,8 @@ const artistResolvers = {
     },
     async patchArtist (_, args) {
       try {
-        const result = await Artist.updateOne({ _id: args.id }, { $set: { ... args.input, updatedAt: Date.now() } });
+        const updateDoc = { $set: { ... args.input, updatedAt: Date.now() } };
+        const result = await Artist.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) {
         console.log(error);

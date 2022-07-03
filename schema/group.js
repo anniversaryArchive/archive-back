@@ -15,6 +15,7 @@ const groupTypeDefs = gql`
   }
   input ArtistInput {
     name: String!
+    debutDate: Date
     birthDay: Date!
   }
   input createGroupInput {

@@ -34,21 +34,29 @@ const groupResolvers = {
     }
   },
   Mutation: {
+    /**
+     * Group 생성 시, Group 내 Artist도 한 번에 생성 가능
+     */
     async createGroup (_, args) {
       try {
         const { artists, debutDate } = args.input;
+        
+        // 아티스트 생성 시 group._id가 필요하기 때문에 위에서 그룹 생성을 먼저 해준다.
         delete args.input.artists;
         const group = new Group({ ... args.input });
         const result = await group.save();
         const id = result._id;
 
+        // 그룹 내 아티스트 생성
         if (artists && artists.length) {
           artists.forEach((artist) => {
-            artist.debutDate = debutDate
+            // 개인 데뷔 일자가 없는 경우, 그룹의 데뷔 일자로 넣어줍니다.
+            if (!debutDate) { artist.debutDate = debutDate }
             artist.group = id;
           });
           Artist.insertMany(artists);
         }
+
         return await Group.findOne({ _id: id });
       } catch (error) {
         console.log(error);
@@ -57,7 +65,8 @@ const groupResolvers = {
     },
     async updateGroup (_, args) {
       try {
-        await Group.updateOne({ _id: args.id }, { $set: { ... args.input, updatedAt: Date.now() } });
+        const updateDoc = { $set: { ... args.input, updatedAt: Date.now() } };
+        await Group.updateOne({ _id: args.id }, updateDoc);
         const group = await Group.findOne({ _id: args.id });
         return group;
       } catch (error) {
@@ -67,7 +76,8 @@ const groupResolvers = {
     },
     async patchGroup (_, args) {
       try {
-        const result = await Group.updateOne({ _id: args.id }, { $set: { ... args.input, updatedAt: Date.now() } });
+        const updateDoc = { $set: { ... args.input, updatedAt: Date.now() } };
+        const result = await Group.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) {
         console.log(error);

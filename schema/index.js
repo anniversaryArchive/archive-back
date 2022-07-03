@@ -1,16 +1,9 @@
 const { gql } = require('apollo-server');
 
-const typeDefs = gql`
-  type Query {
-    groups:[Group]
-  }
-  type Group{
-    _id: ID
-    name: String
-    artists: [String]
-    debutDate: Date
-  }
+const groupTypeDefs = require('./group');
 
+const typeDefs = gql`
+  ${groupTypeDefs}
   scalar Date
 `;
 

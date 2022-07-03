@@ -3,7 +3,7 @@ const { ApolloServer } = require('apollo-server');
 
 const app = express();
 
-const typeDefs = require('./Schema/schema');
+const typeDefs = require('./schema/schema');
 const resolvers = require('./resolvers/resolver');
 
 const dbConnect = require('./mongodb/mongodb');

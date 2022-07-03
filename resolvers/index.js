@@ -1,28 +1,16 @@
-const Group = require('../models/group');
+const groupResolvers = require('./group');
+const artistResolvers = require('./artist');
 
 const resolvers = {
+  Group: groupResolvers.Group,
+  Artist: artistResolvers.Artist,
   Query: {
-    async groups(_, __) {
-      try {
-        const groups = await Group.find();
-        return groups;
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
-    }
+    ... groupResolvers.Query,
+    ... artistResolvers.Query,
   },
   Mutation: {
-    async createGroup (_, args) {
-      try {
-        const group = new Group({ ... args.input });
-        const result = await group.save();
-        return result;
-      } catch (error) {
-        console.log(error);
-        throw error;
-      }
-    }
+    ... groupResolvers.Mutation,
+    ... artistResolvers.Mutation,
   }
 };
 

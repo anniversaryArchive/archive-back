@@ -9,7 +9,7 @@ const groupTypeDefs = gql`
     createdAt: Date
     updatedAt: Date
     name: String
-    artists: [String]
+    artists: [Artist]
     debutDate: Date
   }
   input GroupInput {

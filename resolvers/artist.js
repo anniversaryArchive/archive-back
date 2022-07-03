@@ -12,6 +12,15 @@ const artistResolvers = {
         throw error;
       }
     },
+    async artist (_, args) {
+      try {
+        const artist = await Artist.findOne({ _id: args.id });
+        return artist;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
   },
   Artist: {
     async group (_, __) {
@@ -32,6 +41,33 @@ const artistResolvers = {
         return result;
       } catch (error) {
         console.log(error);
+        throw error;
+      }
+    },
+    async updateArtist (_, args) {
+      try {
+        await Artist.updateOne({ _id: args.id }, { $set: { ... args.input, updatedAt: Date.now() } });
+        const artist = await Artist.findOne({ _id: args.id });
+        return artist;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+    async patchArtist (_, args) {
+      try {
+        const result = await Artist.updateOne({ _id: args.id }, { $set: { ... args.input, updatedAt: Date.now() } });
+        return result.modifiedCount === 1;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+    async removeArtist (_, args) {
+      try {
+        const result = await Artist.deleteOne({ _id: args.id });
+        return result.deletedCount === 1;
+      } catch (error) {
         throw error;
       }
     },

@@ -3,6 +3,7 @@ const { gql } = require('apollo-server');
 const groupTypeDefs = gql`
   type Query {
     groups:[Group]
+    group (id: ID!): Group
   }
   type Group {
     _id: ID
@@ -12,12 +13,20 @@ const groupTypeDefs = gql`
     artists: [Artist]
     debutDate: Date
   }
-  input GroupInput {
+  input createGroupInput {
     name: String!
     debutDate: Date!
   }
+  input updateGroupInput {
+    name: String
+    debutDate: Date
+    artists: [ID]
+  }
   type Mutation {
-    createGroup (input: GroupInput!): Group!
+    createGroup (input: createGroupInput!): Group
+    updateGroup (id: ID!, input: updateGroupInput!): Group
+    patchGroup (id: ID!, input: updateGroupInput!): Boolean
+    removeGroup (id: ID!): Boolean
   }
 `
 

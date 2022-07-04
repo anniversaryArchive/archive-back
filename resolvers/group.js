@@ -15,7 +15,7 @@ const groupResolvers = {
     },
     async group (_, args) {
       try {
-        const group = await Group.findOne({ _id: args.id });
+        const group = await Group.findById(args.id);
         return group;
       } catch (error) {
         console.log(error);
@@ -66,8 +66,7 @@ const groupResolvers = {
           });
           Artist.insertMany(artists);
         }
-
-        return await Group.findOne({ _id: id });
+        return await Group.findById(id);
       } catch (error) {
         console.log(error);
         throw error;
@@ -77,7 +76,7 @@ const groupResolvers = {
       try {
         const updateDoc = { $set: { ... args.input, updatedAt: Date.now() } };
         await Group.updateOne({ _id: args.id }, updateDoc);
-        const group = await Group.findOne({ _id: args.id });
+        const group = await Group.findById(args.id);
         return group;
       } catch (error) {
         console.log(error);

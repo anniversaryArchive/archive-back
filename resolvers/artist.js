@@ -14,7 +14,7 @@ const artistResolvers = {
     },
     async artist (_, args) {
       try {
-        const artist = await Artist.findOne({ _id: args.id });
+        const artist = await Artist.findById(args.id);
         return artist;
       } catch (error) {
         console.log(error);
@@ -25,7 +25,7 @@ const artistResolvers = {
   Artist: {
     async group (_, __) {
       try {
-        const group = await Group.findOne({ _id: _.group });
+        const group = await Group.findById(_.group);
         return group;
       } catch (error) {
         console.log(error);
@@ -48,7 +48,7 @@ const artistResolvers = {
       try {
         const updateDoc = { $set: { ... args.input, updatedAt: Date.now() } };
         await Artist.updateOne({ _id: args.id }, updateDoc);
-        const artist = await Artist.findOne({ _id: args.id });
+        const artist = await Artist.findById(args.id);
         return artist;
       } catch (error) {
         console.log(error);

@@ -1,6 +1,7 @@
 const express = require('express');
-const { ApolloServer } = require('apollo-server');
+const { ApolloServer } = require('apollo-server-express');
 
+const port = 3000;
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -31,10 +32,10 @@ const server = new ApolloServer({
   playground: true
 });
 
-server.listen().then(({ url }) => {
-  console.log(`Server : ${url}`);
+server.start().then(_ => {
+  server.applyMiddleware({ app, path: '/' });
+  app.listen({ port }, () => 
+    console.log(`Gateway API running at port: ${port}`)
+  );  
 });
 
-app.listen(3000, () => {
-  console.log('Restful server port : 3000');
-});

@@ -12,6 +12,7 @@ const groupTypeDefs = gql`
     name: String
     artists: [Artist]
     debutDate: Date
+    logo: Image
   }
   input ArtistInput {
     name: String!
@@ -22,11 +23,13 @@ const groupTypeDefs = gql`
     name: String!
     debutDate: Date!
     artists: [ArtistInput]
+    logo: ID
   }
   input updateGroupInput {
     name: String
     debutDate: Date
     artists: [ID]
+    logo: ID
   }
   type Mutation {
     createGroup (input: createGroupInput!): Group

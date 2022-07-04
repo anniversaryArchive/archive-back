@@ -1,5 +1,6 @@
 const Group = require('../models/group');
 const Artist = require('../models/artist');
+const Image = require('../models/image');
 
 const groupResolvers = {
   Query: {
@@ -31,7 +32,16 @@ const groupResolvers = {
         console.log(error);
         throw error;
       }
-    }
+    },
+    async logo (_, __) {
+      try {
+        const image = await Image.findById(_.logo);
+        return image;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
   },
   Mutation: {
     /**

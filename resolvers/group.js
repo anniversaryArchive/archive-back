@@ -42,7 +42,6 @@ const groupResolvers = {
         const { artists, debutDate } = args.input;
         
         // 아티스트 생성 시 group._id가 필요하기 때문에 위에서 그룹 생성을 먼저 해준다.
-        delete args.input.artists;
         const group = new Group({ ... args.input });
         const result = await group.save();
         const id = result._id;
@@ -54,7 +53,7 @@ const groupResolvers = {
             if (!artist.debutDate) { artist.debutDate = debutDate }
             artist.group = id;
           });
-          Artist.insertMany(artists);
+          await Artist.insertMany(artists);
         }
         return await Group.findById(id);
       } catch (error) {

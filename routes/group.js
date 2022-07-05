@@ -13,7 +13,7 @@ router.get('/', async (_, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const group = await Group.findOne({ _id: req.params.id });
+    const group = await Group.findById(req.params.id);
     if (!group) { return res.json({ success: false, message: 'not found', code: 404 }); }
     res.json({ success: true, group });
   } catch (error) {

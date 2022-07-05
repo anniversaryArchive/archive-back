@@ -19,11 +19,11 @@ app.use('/group', groupRouter);
 dbConnect();
 
 const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    playground: true
+  typeDefs,
+  resolvers,
+  playground: true
 });
 
 server.listen().then(({ url }) => {
-    console.log(`Server : ${url}`);
+  console.log(`Server : ${url}`);
 });

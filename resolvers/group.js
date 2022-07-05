@@ -62,11 +62,12 @@ const groupResolvers = {
       }
     },
     async updateGroup (_, args) {
+      const defaultValue = { name: '', updatedAt: Date.now(), debutDate: null };
       try {
-        const updateDoc = { $set: { ... args.input, updatedAt: Date.now() } };
-        await Group.updateOne({ _id: args.id }, updateDoc);
-        const group = await Group.findById(args.id);
-        return group;
+        const updateValue = Object.assign(defaultValue, args.input);
+        const updateDoc = { $set: updateValue };
+        const result = await Group.updateOne({ _id: args.id }, updateDoc);
+        return result.modifiedCount === 1;
       } catch (error) {
         console.log(error);
         throw error;

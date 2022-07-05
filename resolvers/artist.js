@@ -45,11 +45,12 @@ const artistResolvers = {
       }
     },
     async updateArtist (_, args) {
+      const defaultValue = { name: '', updatedAt: Date.now(), debutDate: null, birthDay: null, group: null };
       try {
-        const updateDoc = { $set: { ... args.input, updatedAt: Date.now() } };
-        await Artist.updateOne({ _id: args.id }, updateDoc);
-        const artist = await Artist.findById(args.id);
-        return artist;
+        const updateValue = Object.assign(defaultValue, args.input);
+        const updateDoc = { $set: updateValue };
+        const result = await Artist.updateOne({ _id: args.id }, updateDoc);
+        return result.modifiedCount === 1;
       } catch (error) {
         console.log(error);
         throw error;

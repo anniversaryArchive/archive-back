@@ -30,7 +30,7 @@ const groupTypeDefs = gql`
   }
   type Mutation {
     createGroup (input: createGroupInput!): Group
-    updateGroup (id: ID!, input: updateGroupInput!): Group
+    updateGroup (id: ID!, input: updateGroupInput!): Boolean
     patchGroup (id: ID!, input: updateGroupInput!): Boolean
     removeGroup (id: ID!): Boolean
   }

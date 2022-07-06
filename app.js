@@ -1,5 +1,9 @@
 const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
+const {
+  ApolloServerPluginLandingPageLocalDefault,
+  ApolloServerPluginLandingPageProductionDefault
+} = require('apollo-server-core');
 require('dotenv').config();
 
 const port = process.env.PORT || 3000;
@@ -30,7 +34,18 @@ dbConnect();
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  playground: true
+  introspection: true,
+  playground: true,
+  csrfPrevention: true,
+  cache: 'bounded',
+  plugins: [
+    process.env.NODE_ENV === 'production'
+      ? ApolloServerPluginLandingPageProductionDefault({
+          graphRef: process.env.APOLLO_GRAPH_REF,
+          footer: false,
+        })
+      : ApolloServerPluginLandingPageLocalDefault({ footer: false }),
+  ],
 });
 
 server.start().then(_ => {

@@ -1,4 +1,0 @@
-APOLLO_KEY=service:My-Graph-mb0s6r:3j3oknpA93upHLYR8W_fYA \
-  rover subgraph publish My-Graph-mb0s6r@current \
-  --name products --schema ./products-schema.graphql \
-  --routing-url http://products.prod.svc.cluster.local:4001/graphql

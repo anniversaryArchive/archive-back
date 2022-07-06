@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server');
+const { gql } = require('apollo-server-express');
 
 const artistTypeDefs = gql`
   type Query {
@@ -13,18 +13,21 @@ const artistTypeDefs = gql`
     debutDate: Date
     birthDay: Date
     group: Group
+    image: Image
   }
   input createArtistInput {
     name: String!
     debutDate: Date!
     birthDay: Date!
     group: ID
+    image: ID
   }
   input updateArtistInput {
     name: String
     debutDate: Date
     birthDay: Date
     group: ID
+    image: ID
   }
   type Mutation {
     createArtist (input: createArtistInput!): Artist!

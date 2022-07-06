@@ -7,7 +7,7 @@ const artistSchema = new mongoose.Schema({
   debutDate: { type: Date, required: true },    // 데뷔일
   birthDay: { type: Date, required: true },     // 생일 
   group: mongoose.Types.ObjectId,               // 아티스트가 속한 그룹 
+  image: mongoose.Types.ObjectId,               // 이미지 
 });
 
 module.exports = mongoose.model('artist', artistSchema);
-

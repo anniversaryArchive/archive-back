@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-const dbConfig = require('../config/db-config.json');
+require('dotenv').config();
 
-const url = `mongodb+srv://${dbConfig.user}:${dbConfig.password}@archive.esqyg.mongodb.net/${dbConfig.database}?retryWrites=true&w=majority`;
+const url = `mongodb+srv://${process.env.ID}:${process.env.PASSWORD}@archive.esqyg.mongodb.net/${process.env.DATABASE}?retryWrites=true&w=majority`;
 
 module.exports = () => {
   mongoose.connect(url).then(() => {

@@ -15,6 +15,7 @@ const groupTypeDefs = gql`
     debutDate: Date
     logo: Image
     color: String
+    isSoloArtist: Boolean
   }
   type GroupPage {
     data: [Group]

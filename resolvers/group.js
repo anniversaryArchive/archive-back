@@ -49,6 +49,7 @@ const groupResolvers = {
             .skip(skip);
           data = data.concat(artists.map((artist) => {
             artist.logo = artist.image;
+            artist.isSoloArtist = true
             return artist;
           }));
         }

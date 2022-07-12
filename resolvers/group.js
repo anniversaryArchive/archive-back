@@ -47,7 +47,10 @@ const groupResolvers = {
             .sort({ [sortField]: sortOrder })
             .limit(args.perPage - data.length)
             .skip(skip);
-            data = data.concat(artists);
+          data = data.concat(artists.map((artist) => {
+            artist.logo = artist.image;
+            return artist;
+          }));
         }
         return { data, total };
       } catch (error) {

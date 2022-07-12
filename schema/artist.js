@@ -14,6 +14,7 @@ const artistTypeDefs = gql`
     birthDay: Date
     group: Group
     image: Image
+    color: String
   }
   input createArtistInput {
     name: String!
@@ -21,6 +22,7 @@ const artistTypeDefs = gql`
     birthDay: Date!
     group: ID
     image: ID
+    color: String
   }
   input updateArtistInput {
     name: String
@@ -28,6 +30,7 @@ const artistTypeDefs = gql`
     birthDay: Date
     group: ID
     image: ID
+    color: String
   }
   type Mutation {
     createArtist (input: createArtistInput!): Artist!

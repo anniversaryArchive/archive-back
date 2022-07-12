@@ -15,6 +15,7 @@ const groupTypeDefs = gql`
     artists: [Artist]
     debutDate: Date
     logo: Image
+    color: String
   }
   type GroupPage {
     data: [Group]
@@ -30,12 +31,14 @@ const groupTypeDefs = gql`
     debutDate: Date!
     artists: [ArtistInput]
     logo: ID
+    color: String
   }
   input updateGroupInput {
     name: String
     debutDate: Date
     artists: [ID]
     logo: ID
+    color: String
   }
   type Mutation {
     createGroup (input: createGroupInput!): Group

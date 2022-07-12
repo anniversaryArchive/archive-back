@@ -4,6 +4,11 @@ const artistTypeDefs = gql`
   type Query {
     artists: [Artist]
     artist (id: ID!): Artist
+    ArtistPagination (page: Int, perPage: Int, sortField: String, sortOrder: String, includeSolo: Boolean): ArtistPage
+  }
+  type ArtistPage {
+    data: [Artist]
+    total: Int!
   }
   type Artist {
     _id: ID

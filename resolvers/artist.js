@@ -22,6 +22,23 @@ const artistResolvers = {
         throw error;
       }
     },
+    async ArtistPagination (_, args) {
+      const sortField = args.sortField || 'createdAt';
+      const sortOrder = (!args.sortOrder || args.sortOrder === '1') ? 'asc' : 'desc';
+      const page = args.page || 0;
+
+      try {
+        const artists = await Artist.find()
+          .sort({ [sortField]: sortOrder })
+          .limit(args.perPage)
+          .skip(args.perPage * page)
+        const total = await Artist.find().countDocuments({});
+        return { data: artists, total };
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
   },
   Artist: {
     async group (_, __) {

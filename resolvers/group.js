@@ -22,37 +22,34 @@ const groupResolvers = {
         throw error;
       }
     },
+    /**
+     * Group을 Pagination으로 가져온다.
+     * - includeSolo 가 true인 경우, 뒤에 Solo Artist도 포함한다.
+     */
     async GroupPagination (_, args) {
       const sortField = args.sortField || 'createdAt';
-      const sortOrder = (!args.sortOrder || args.sortOrder === "1") ? 'asc' : 'desc';
+      const sortOrder = (!args.sortOrder || args.sortOrder === '1') ? 'asc' : 'desc';
       const page = args.page || 0;
 
       try {
-        let artists = [];
-        const halfPerPage = args.perPage / 2;
-        const artistTotal = await Artist.find({ group: { $exists: false } }).countDocuments({});
-        if (!args.perPage || page * halfPerPage <= artistTotal) {
-          artists = await Artist.find({ group: { $exists: false } })
-            .sort({ [sortField]: sortOrder })
-            .limit(halfPerPage)
-            .skip(halfPerPage * page);
-        }
-        
-        let skip = 0;
-        if (artistTotal / halfPerPage <= page) {
-          skip = artistTotal / halfPerPage + artistTotal % halfPerPage;
-          if (artistTotal / halfPerPage < page) {
-            const overPage = page - artistTotal / halfPerPage;
-            skip += overPage * args.perPage;
-          }
-        } else { skip = halfPerPage * page; }
-
-        const groups = await Group.find()
+        let data = await Group.find()
           .sort({ [sortField]: sortOrder })
-          .limit(args.perPage - artists.length)
-          .skip(skip)
-        const total = await Group.find().countDocuments({});
-        return { data: [... artists, ... groups], total: total + artistTotal };
+          .limit(args.perPage)
+          .skip(args.perPage * page)
+        const groupTotal = await Group.find().countDocuments({});
+        let total = groupTotal;
+
+        // 솔로 아티스트가 포함인 경우, 뒤에 솔로 아티스트도 포함해서 리스트를 보여준다.
+        if (args.includeSolo && data.length < args.perPage) {
+          total += await Artist.find({ group: { $exists: false } }).countDocuments({});
+          const skip = (args.page * args.perPage) - groupTotal + data.length;
+          const artists = await Artist.find({ group: { $exists: false } })
+            .sort({ [sortField]: sortOrder })
+            .limit(args.perPage - data.length)
+            .skip(skip);
+            data = data.concat(artists);
+        }
+        return { data, total };
       } catch (error) {
         console.log(error);
         throw error;

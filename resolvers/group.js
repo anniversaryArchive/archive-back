@@ -22,6 +22,42 @@ const groupResolvers = {
         throw error;
       }
     },
+    async GroupPagination (_, args) {
+      const sortField = args.sortField || 'createdAt';
+      const sortOrder = (!args.sortOrder || args.sortOrder === "1") ? 'asc' : 'desc';
+      const page = args.page || 0;
+
+      try {
+        let artists = [];
+        const halfPerPage = args.perPage / 2;
+        const artistTotal = await Artist.find({ group: { $exists: false } }).countDocuments({});
+        if (!args.perPage || page * halfPerPage <= artistTotal) {
+          artists = await Artist.find({ group: { $exists: false } })
+            .sort({ [sortField]: sortOrder })
+            .limit(halfPerPage)
+            .skip(halfPerPage * page);
+        }
+        
+        let skip = 0;
+        if (artistTotal / halfPerPage <= page) {
+          skip = artistTotal / halfPerPage + artistTotal % halfPerPage;
+          if (artistTotal / halfPerPage < page) {
+            const overPage = page - artistTotal / halfPerPage;
+            skip += overPage * args.perPage;
+          }
+        } else { skip = halfPerPage * page; }
+
+        const groups = await Group.find()
+          .sort({ [sortField]: sortOrder })
+          .limit(args.perPage - artists.length)
+          .skip(skip)
+        const total = await Group.find().countDocuments({});
+        return { data: [... artists, ... groups], total: total + artistTotal };
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    }
   },
   Group: {
     async artists (_, __) {

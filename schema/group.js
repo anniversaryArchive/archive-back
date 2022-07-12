@@ -4,6 +4,8 @@ const groupTypeDefs = gql`
   type Query {
     groups:[Group]
     group (id: ID!): Group
+
+    GroupPagination (page: Int, perPage: Int, sortField: String, sortOrder: String, includeSolo: Boolean): GroupPage
   }
   type Group {
     _id: ID
@@ -13,6 +15,10 @@ const groupTypeDefs = gql`
     artists: [Artist]
     debutDate: Date
     logo: Image
+  }
+  type GroupPage {
+    data: [Group]
+    total: Int!
   }
   input ArtistInput {
     name: String!

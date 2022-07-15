@@ -22,7 +22,7 @@ const artistResolvers = {
         throw error;
       }
     },
-    async ArtistPagination (_, args) {
+    async artistPagination (_, args) {
       const sortField = args.sortField || 'createdAt';
       const sortOrder = (!args.sortOrder || args.sortOrder === '1') ? 'asc' : 'desc';
       const page = args.page || 0;

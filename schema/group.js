@@ -13,6 +13,7 @@ const groupTypeDefs = gql`
     artists: [Artist]
     debutDate: Date
     logo: Image
+    yejin: String
   }
   input ArtistInput {
     name: String!

@@ -6,6 +6,7 @@ const groupSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }, // 마지막 업데이트 일자 
   debutDate: { type: Date, required: true },    // 데뷔일
   logo: mongoose.Types.ObjectId,                // 로고 이미지
+  yejin: String,                // 로고 이미지
 });
 
 module.exports = mongoose.model('group', groupSchema);

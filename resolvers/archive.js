@@ -1,4 +1,5 @@
 const Archive = require('../models/archive');
+const Image = require('../models/image');
 
 const archiveResolvers = {
   Query: {

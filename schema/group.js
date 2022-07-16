@@ -4,6 +4,7 @@ const groupTypeDefs = gql`
   type Query {
     groups:[Group]
     group (id: ID!): Group
+    GroupPagination (page: Int, perPage: Int, sortField: String, sortOrder: String, includeSolo: Boolean): GroupPage
   }
   type Group {
     _id: ID
@@ -13,6 +14,12 @@ const groupTypeDefs = gql`
     artists: [Artist]
     debutDate: Date
     logo: Image
+    color: String
+    isSoloArtist: Boolean
+  }
+  type GroupPage {
+    data: [Group]
+    total: Int!
   }
   input ArtistInput {
     name: String!
@@ -24,12 +31,14 @@ const groupTypeDefs = gql`
     debutDate: Date!
     artists: [ArtistInput]
     logo: ID
+    color: String
   }
   input updateGroupInput {
     name: String
     debutDate: Date
     artists: [ID]
     logo: ID
+    color: String
   }
   type Mutation {
     createGroup (input: createGroupInput!): Group

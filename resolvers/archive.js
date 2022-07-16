@@ -32,28 +32,28 @@ const archiveResolvers = {
         throw error;
       }
     },
-    // async updateArchive (_, args) {
-    //   const defaultValue = { name: '', updatedAt: Date.now(), debutDate: null, birthDay: null, group: null };
-    //   try {
-    //     const updateValue = Object.assign(defaultValue, args.input);
-    //     const updateDoc = { $set: updateValue };
-    //     const result = await Artist.updateOne({ _id: args.id }, updateDoc);
-    //     return result.modifiedCount === 1;
-    //   } catch (error) {
-    //     console.log(error);
-    //     throw error;
-    //   }
-    // },
-    // async patchArchive (_, args) {
-    //   try {
-    //     const updateDoc = { $set: { ... args.input, updatedAt: Date.now() } };
-    //     const result = await Artist.updateOne({ _id: args.id }, updateDoc);
-    //     return result.modifiedCount === 1;
-    //   } catch (error) {
-    //     console.log(error);
-    //     throw error;
-    //   }
-    // },
+    async updateArchive (_, args) {
+      const defaultValue = { archiveName: '', themeName: '', address: '', number: null, link: null };
+      try {
+        const updateValue = Object.assign(defaultValue, args.input);
+        const updateDoc = { $set: updateValue };
+        const result = await Archive.updateOne({ _id: args.id }, updateDoc);
+        return result.modifiedCount === 1;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+    async patchArchive (_, args) {
+      try {
+        const updateDoc = { $set: args.input };
+        const result = await Archive.updateOne({ _id: args.id }, updateDoc);
+        return result.modifiedCount === 1;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
     async removeArchive (_, args) {
       try {
         const result = await Archive.deleteOne({ _id: args.id });

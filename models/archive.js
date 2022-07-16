@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 
 const archiveSchema = new mongoose.Schema({
+    lat: { type: Number, default: 0.0 },            // 위도
+    lng: { type: Number, default: 0.0 },            // 경도 
     archiveName: { type: String, required: true },  // 아카이브 명 
     themeName: { type: String, required: true },    // 아카이브 테마 명 
     address: { type: String, required: true },      // 아카이브 주소 

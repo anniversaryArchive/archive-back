@@ -7,6 +7,8 @@ const archiveTypeDefs = gql`
   }
   type Archive {
     _id: ID
+    lat: Float
+    lng: Float
     archiveName: String
     themeName: String
     address: String
@@ -16,18 +18,22 @@ const archiveTypeDefs = gql`
     link: String
   }
   input createArchiveInput {
-    archiveName: String
-    themeName: String!
-    address: String
-    number: String!
-    link: String!
+    lat: Float!
+    lng: Float!
+    archiveName: String!
+    themeName: String
+    address: String!
+    number: String
+    link: String
   }
   input updateArchiveInput {
+    lat: Float
+    lng: Float
     archiveName: String
-    themeName: String!
+    themeName: String
     address: String
-    number: String!
-    link: String!
+    number: String
+    link: String
   }
 
   type Mutation {

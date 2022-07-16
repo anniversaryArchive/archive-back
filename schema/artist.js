@@ -4,6 +4,11 @@ const artistTypeDefs = gql`
   type Query {
     artists: [Artist]
     artist (id: ID!): Artist
+    artistPagination (page: Int, perPage: Int, sortField: String, sortOrder: String, includeSolo: Boolean): ArtistPage
+  }
+  type ArtistPage {
+    data: [Artist]
+    total: Int!
   }
   type Artist {
     _id: ID
@@ -14,6 +19,7 @@ const artistTypeDefs = gql`
     birthDay: Date
     group: Group
     image: Image
+    color: String
   }
   input createArtistInput {
     name: String!
@@ -21,6 +27,7 @@ const artistTypeDefs = gql`
     birthDay: Date!
     group: ID
     image: ID
+    color: String
   }
   input updateArtistInput {
     name: String
@@ -28,6 +35,7 @@ const artistTypeDefs = gql`
     birthDay: Date
     group: ID
     image: ID
+    color: String
   }
   type Mutation {
     createArtist (input: createArtistInput!): Artist!

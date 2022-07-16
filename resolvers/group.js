@@ -22,6 +22,43 @@ const groupResolvers = {
         throw error;
       }
     },
+    /**
+     * Group을 Pagination으로 가져온다.
+     * - includeSolo 가 true인 경우, 뒤에 Solo Artist도 포함한다.
+     */
+    async GroupPagination (_, args) {
+      const sortField = args.sortField || 'createdAt';
+      const sortOrder = (!args.sortOrder || args.sortOrder === '1') ? 'asc' : 'desc';
+      const page = args.page || 0;
+
+      try {
+        let data = await Group.find()
+          .sort({ [sortField]: sortOrder })
+          .limit(args.perPage)
+          .skip(args.perPage * page)
+        const groupTotal = await Group.find().countDocuments({});
+        let total = groupTotal;
+
+        // 솔로 아티스트가 포함인 경우, 뒤에 솔로 아티스트도 포함해서 리스트를 보여준다.
+        if (args.includeSolo && data.length < args.perPage) {
+          total += await Artist.find({ group: { $exists: false } }).countDocuments({});
+          const skip = (args.page * args.perPage) - groupTotal + data.length;
+          const artists = await Artist.find({ group: { $exists: false } })
+            .sort({ [sortField]: sortOrder })
+            .limit(args.perPage - data.length)
+            .skip(skip);
+          data = data.concat(artists.map((artist) => {
+            artist.logo = artist.image;
+            artist.isSoloArtist = true
+            return artist;
+          }));
+        }
+        return { data, total };
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    }
   },
   Group: {
     async artists (_, __) {

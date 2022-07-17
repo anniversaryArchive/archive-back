@@ -33,7 +33,7 @@ const archiveResolvers = {
       }
     },
     async updateArchive (_, args) {
-      const defaultValue = { lat: 0.0, lng: 0.0, archiveName: '', themeName: '', address: '', number: null, link: null };
+      const defaultValue = { lat: 0.0, lng: 0.0, archiveName: '', themeName: '', organizer: '', address: '', number: null, link: null };
       try {
         const updateValue = Object.assign(defaultValue, args.input);
         const updateDoc = { $set: updateValue };

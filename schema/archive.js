@@ -11,6 +11,7 @@ const archiveTypeDefs = gql`
     lng: Float
     archiveName: String
     themeName: String
+    organizer: String
     address: String
     startDate: Date
     endDate: Date
@@ -24,6 +25,7 @@ const archiveTypeDefs = gql`
     lng: Float!
     archiveName: String!
     themeName: String
+    organizer: String
     address: String!
     startDate: Date!
     endDate: Date!
@@ -35,6 +37,7 @@ const archiveTypeDefs = gql`
     lng: Float
     archiveName: String
     themeName: String
+    organizer: String
     address: String
     startDate: Date
     endDate: Date

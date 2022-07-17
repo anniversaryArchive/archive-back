@@ -17,6 +17,7 @@ const archiveTypeDefs = gql`
     endDate: Date
     reviewCount: Int
     likeCount: Int
+    images:[Image]
     number: String
     link: String
   }
@@ -29,6 +30,7 @@ const archiveTypeDefs = gql`
     address: String!
     startDate: Date!
     endDate: Date!
+    images:[ID]
     number: String
     link: String
   }
@@ -41,6 +43,7 @@ const archiveTypeDefs = gql`
     address: String
     startDate: Date
     endDate: Date
+    images:[ID]
     number: String
     link: String
   }

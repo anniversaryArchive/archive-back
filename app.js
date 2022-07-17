@@ -6,28 +6,35 @@ const {
 } = require('apollo-server-core');
 require('dotenv').config();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const session = require("express-session");
+const passport = require('passport');
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(session({secret:'MySecret', resave: false, saveUninitialized:true}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
 
 const dbConnect = require('./mongodb/mongodb');
-
 const indexRouter = require('./routes/index');
 const archiveRouter = require('./routes/archive');
 const groupRouter = require('./routes/group');
 const imageRouter = require('./routes/image');
+const authRouter = require('./routes/auth');
 
 app.use('/', indexRouter);
 app.use('/archive', archiveRouter);
 app.use('/group', groupRouter);
 app.use('/image', imageRouter);
+app.use('/auth', authRouter);
 
 dbConnect();
 

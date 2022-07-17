@@ -24,7 +24,6 @@ const groupRouter = require('./routes/group');
 const imageRouter = require('./routes/image');
 
 app.use('/', indexRouter);
-app.use('/archive', archiveRouter);
 app.use('/group', groupRouter);
 app.use('/image', imageRouter);
 

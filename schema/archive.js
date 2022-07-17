@@ -12,6 +12,8 @@ const archiveTypeDefs = gql`
     archiveName: String
     themeName: String
     address: String
+    startDate: Date
+    endDate: Date
     reviewCount: Int
     likeCount: Int
     number: String
@@ -23,6 +25,8 @@ const archiveTypeDefs = gql`
     archiveName: String!
     themeName: String
     address: String!
+    startDate: Date!
+    endDate: Date!
     number: String
     link: String
   }
@@ -32,6 +36,8 @@ const archiveTypeDefs = gql`
     archiveName: String
     themeName: String
     address: String
+    startDate: Date
+    endDate: Date
     number: String
     link: String
   }

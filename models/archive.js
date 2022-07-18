@@ -11,7 +11,7 @@ const archiveSchema = new mongoose.Schema({
     endDate: { type: Date, required: true },        // 아카이브 종료일 
     reviewCount: { type: Number, default: 0 },      // 리뷰갯수  
     likeCount: { type: Number, default: 0 },        // 좋아요갯수 
-    imsges: [mongoose.Types.ObjectId],              // 아카이브 이미지리스트 
+    images: [mongoose.Types.ObjectId],              // 아카이브 이미지리스트 
     number: String,                                 // 아카이브 전화번호 
     link: String,                                   // 아카이브 대표링크 
 });

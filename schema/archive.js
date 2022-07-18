@@ -18,7 +18,7 @@ const archiveTypeDefs = gql`
     reviewCount: Int
     likeCount: Int
     images:[Image]
-    number: String
+    phoneNumber: String
     link: String
   }
   input createArchiveInput {
@@ -31,7 +31,7 @@ const archiveTypeDefs = gql`
     startDate: Date!
     endDate: Date!
     images:[ID]
-    number: String
+    phoneNumber: String
     link: String
   }
   input updateArchiveInput {
@@ -44,7 +44,7 @@ const archiveTypeDefs = gql`
     startDate: Date
     endDate: Date
     images:[ID]
-    number: String
+    phoneNumber: String
     link: String
   }
 

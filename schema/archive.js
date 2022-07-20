@@ -15,7 +15,6 @@ const archiveTypeDefs = gql`
     address: String
     startDate: Date
     endDate: Date
-    likeCount: Int
     images:[Image]
     phoneNumber: String
     link: String

@@ -9,7 +9,6 @@ const archiveSchema = new mongoose.Schema({
     organizer: String,                              // 주최자 
     startDate: { type: Date, required: true },      // 아카이브 시작일
     endDate: { type: Date, required: true },        // 아카이브 종료일 
-    reviewCount: { type: Number, default: 0 },      // 리뷰갯수  
     likeCount: { type: Number, default: 0 },        // 좋아요갯수 
     images: [mongoose.Types.ObjectId],              // 아카이브 이미지리스트 
     phoneNumber: String,                                 // 아카이브 전화번호 

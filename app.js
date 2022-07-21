@@ -20,6 +20,9 @@ app.use(session({secret:'MySecret', resave: false, saveUninitialized:true}));
 app.use(passport.initialize());
 app.use(passport.session());
 
+const initPassport = require('./passport');
+initPassport();
+
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
 

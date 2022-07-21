@@ -26,9 +26,14 @@ const artistResolvers = {
       const sortField = args.sortField || 'createdAt';
       const sortOrder = (!args.sortOrder || args.sortOrder === '1') ? 'asc' : 'desc';
       const page = args.page || 0;
+      const filter = args.filter || {};
+      const findOption = {}
+      for (const key of Object.keys(filter)) {
+        findOption[key] = filter[key];
+      }
 
       try {
-        const artists = await Artist.find()
+        const artists = await Artist.find(findOption)
           .sort({ [sortField]: sortOrder })
           .limit(args.perPage)
           .skip(args.perPage * page)

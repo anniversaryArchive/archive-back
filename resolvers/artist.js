@@ -27,17 +27,12 @@ const artistResolvers = {
       const sortOrder = (!args.sortOrder || args.sortOrder === '1') ? 'asc' : 'desc';
       const page = args.page || 0;
       const filter = args.filter || {};
-      const findOption = {}
-      for (const key of Object.keys(filter)) {
-        findOption[key] = filter[key];
-      }
-
       try {
-        const artists = await Artist.find(findOption)
+        const artists = await Artist.find(filter)
           .sort({ [sortField]: sortOrder })
           .limit(args.perPage)
           .skip(args.perPage * page)
-        const total = await Artist.find().countDocuments({});
+        const total = await Artist.find(filter).countDocuments({});
         return { data: artists, total };
       } catch (error) {
         console.log(error);

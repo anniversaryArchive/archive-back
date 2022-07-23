@@ -4,7 +4,7 @@ const artistTypeDefs = gql`
   type Query {
     artists: [Artist]
     artist (id: ID!): Artist
-    artistPagination (page: Int, perPage: Int, sortField: String, sortOrder: String, includeSolo: Boolean): ArtistPage
+    artistPagination (page: Int, perPage: Int, sortField: String, sortOrder: String, filter: ArtistFilterOption): ArtistPage
   }
   type ArtistPage {
     data: [Artist]
@@ -20,6 +20,9 @@ const artistTypeDefs = gql`
     group: Group
     image: Image
     color: String
+  }
+  input ArtistFilterOption {
+    group: ID
   }
   input createArtistInput {
     name: String!

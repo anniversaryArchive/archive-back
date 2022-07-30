@@ -2,7 +2,7 @@ const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const {
   ApolloServerPluginLandingPageLocalDefault,
-  ApolloServerPluginLandingPageProductionDefault
+  ApolloServerPluginLandingPageProductionDefault,
 } = require('apollo-server-core');
 require('dotenv').config();
 
@@ -10,18 +10,10 @@ const port = process.env.PORT || 3001;
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const session = require("express-session");
-const passport = require('passport');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
-app.use(session({secret:'MySecret', resave: false, saveUninitialized:true}));
-app.use(passport.initialize());
-app.use(passport.session());
-
-const initPassport = require('./passport');
-initPassport();
 
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
@@ -56,10 +48,9 @@ const server = new ApolloServer({
   ],
 });
 
-server.start().then(_ => {
+server.start().then((_) => {
   server.applyMiddleware({ app, path: '/' });
-  app.listen({ port }, () => 
-    console.log(`Gateway API running at port: ${port}`)
-  );  
+  app.listen({ port }, () =>
+    console.log(`Gateway API running at port: ${port}`),
+  );
 });
-

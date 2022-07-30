@@ -1,15 +1,19 @@
-const express = require('express'); 
+const express = require('express');
 const router = express.Router();
-const passport = require('passport');
 
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
- 
-router.get(
-   '/google/callback',
-   passport.authenticate('google', { failureRedirect: '/' }),
-   (req, res) => {
-      res.redirect('/');
-   },
-);
+router.post('/', async (req, res) => {
+  try {
+    console.log(req.params);
+    res.json({ success: true });
+  } catch (error) {
+    res.json({ success: false, error });
+  }
+});
 
+// const newUser = await new User({
+//    email: profile.emails[0].value,
+//    nickName: profile.displayName,
+//    provider: 'google',
+//    token: accessToken,
+// }).save();
 module.exports = router;

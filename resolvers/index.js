@@ -1,7 +1,7 @@
 const groupResolvers = require('./group');
 const artistResolvers = require('./artist');
 const archiveResolvers = require('./archive');
-const imageResolvers = require('./image');
+const fileResolvers = require('./file');
 
 const resolvers = {
   Group: groupResolvers.Group,
@@ -10,7 +10,7 @@ const resolvers = {
     ... groupResolvers.Query,
     ... artistResolvers.Query,
     ... archiveResolvers.Query,
-    ... imageResolvers.Query,
+    ... fileResolvers.Query,
   },
   Mutation: {
     ... groupResolvers.Mutation,

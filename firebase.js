@@ -11,7 +11,6 @@ const {
   MEASUREMENT_ID,
 } = process.env;
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: API_KEY,
   authDomain: AUTH_DOMAIN,
@@ -24,5 +23,4 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 
-// Get a reference to the storage service, which is used to create references in your storage bucket
 module.exports = getStorage(firebaseApp);

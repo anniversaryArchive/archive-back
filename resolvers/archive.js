@@ -33,10 +33,8 @@ const archiveResolvers = {
       }
     },
     async updateArchive (_, args) {
-      const defaultValue = { lat: 0.0, lng: 0.0, archiveName: '', themeName: '', organizer: '', address: '', phoneNumber: null, link: null };
       try {
-        const updateValue = Object.assign(defaultValue, args.input);
-        const updateDoc = { $set: updateValue };
+        const updateDoc = { $set: { ... args.input } };
         const result = await Archive.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) {

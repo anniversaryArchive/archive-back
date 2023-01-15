@@ -36,6 +36,14 @@ const groupTypeDefs = gql`
     color: String
   }
   input updateGroupInput {
+    name: String!
+    englishName: String
+    debutDate: Date!
+    artists: [ID]
+    logo: ID!
+    color: String
+  }
+  input patchGroupInput {
     name: String
     englishName: String
     debutDate: Date
@@ -46,7 +54,7 @@ const groupTypeDefs = gql`
   type Mutation {
     createGroup (input: createGroupInput!): Group
     updateGroup (id: ID!, input: updateGroupInput!): Boolean
-    patchGroup (id: ID!, input: updateGroupInput!): Boolean
+    patchGroup (id: ID!, input: patchGroupInput!): Boolean
     removeGroup (id: ID!): Boolean
   }
 `

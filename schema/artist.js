@@ -29,7 +29,7 @@ const artistTypeDefs = gql`
     debutDate: Date!
     birthDay: Date!
     group: ID
-    image: ID
+    image: ID!
     color: String
   }
   input updateArtistInput {

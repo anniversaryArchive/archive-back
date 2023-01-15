@@ -13,7 +13,7 @@ const groupTypeDefs = gql`
     name: String
     artists: [Artist]
     debutDate: Date
-    logo: Image
+    logo: File
     color: String
     isSoloArtist: Boolean
   }

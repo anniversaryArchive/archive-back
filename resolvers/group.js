@@ -1,6 +1,6 @@
 const Group = require('../models/group');
 const Artist = require('../models/artist');
-const Image = require('../models/image');
+const File = require('../models/file');
 
 const groupResolvers = {
   Query: {
@@ -48,7 +48,7 @@ const groupResolvers = {
             .limit(args.perPage - data.length)
             .skip(skip);
           data = data.concat(artists.map((artist) => {
-            artist.logo = artist.image;
+            artist.logo = artist.file;
             artist.isSoloArtist = true
             return artist;
           }));
@@ -72,8 +72,8 @@ const groupResolvers = {
     },
     async logo (_, __) {
       try {
-        const image = await Image.findById(_.logo);
-        return image;
+        const file = await File.findById(_.logo);
+        return file;
       } catch (error) {
         console.log(error);
         throw error;

@@ -18,7 +18,7 @@ const artistTypeDefs = gql`
     debutDate: Date
     birthDay: Date
     group: Group
-    image: Image
+    image: File
     color: String
   }
   input ArtistFilterOption {

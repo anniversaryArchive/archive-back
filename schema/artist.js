@@ -29,10 +29,18 @@ const artistTypeDefs = gql`
     debutDate: Date!
     birthDay: Date!
     group: ID
-    image: ID
+    image: ID!
     color: String
   }
   input updateArtistInput {
+    name: String!
+    debutDate: Date!
+    birthDay: Date!
+    group: ID
+    image: ID!
+    color: String
+  }
+  input patchArtistInput {
     name: String
     debutDate: Date
     birthDay: Date
@@ -43,7 +51,7 @@ const artistTypeDefs = gql`
   type Mutation {
     createArtist (input: createArtistInput!): Artist!
     updateArtist (id: ID!, input: updateArtistInput!): Boolean
-    patchArtist (id: ID!, input: updateArtistInput!): Boolean
+    patchArtist (id: ID!, input: patchArtistInput!): Boolean
     removeArtist (id: ID!): Boolean
   }
 `

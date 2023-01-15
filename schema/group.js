@@ -11,6 +11,7 @@ const groupTypeDefs = gql`
     createdAt: Date
     updatedAt: Date
     name: String
+    englishName: String
     artists: [Artist]
     debutDate: Date
     logo: File
@@ -28,13 +29,23 @@ const groupTypeDefs = gql`
   }
   input createGroupInput {
     name: String!
+    englishName: String
     debutDate: Date!
     artists: [ArtistInput]
-    logo: ID
+    logo: ID!
     color: String
   }
   input updateGroupInput {
+    name: String!
+    englishName: String
+    debutDate: Date!
+    artists: [ID]
+    logo: ID!
+    color: String
+  }
+  input patchGroupInput {
     name: String
+    englishName: String
     debutDate: Date
     artists: [ID]
     logo: ID
@@ -43,7 +54,7 @@ const groupTypeDefs = gql`
   type Mutation {
     createGroup (input: createGroupInput!): Group
     updateGroup (id: ID!, input: updateGroupInput!): Boolean
-    patchGroup (id: ID!, input: updateGroupInput!): Boolean
+    patchGroup (id: ID!, input: patchGroupInput!): Boolean
     removeGroup (id: ID!): Boolean
   }
 `

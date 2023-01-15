@@ -109,7 +109,7 @@ const groupResolvers = {
       }
     },
     async updateGroup (_, args) {
-      const defaultValue = { name: '', updatedAt: Date.now(), debutDate: null };
+      const defaultValue = { name: '', englishName: '', updatedAt: Date.now(), debutDate: null };
       try {
         const updateValue = Object.assign(defaultValue, args.input);
         const updateDoc = { $set: updateValue };

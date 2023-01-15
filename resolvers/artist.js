@@ -1,6 +1,6 @@
 const Artist = require('../models/artist');
 const Group = require('../models/group');
-const Image = require('../models/image');
+const File = require('../models/file');
 
 const artistResolvers = {
   Query: {
@@ -52,7 +52,7 @@ const artistResolvers = {
     },
     async image (_, __) {
       try {
-        const image = await Image.findById(_.image);
+        const image = await File.findById(_.image);
         return image;
       } catch (error) {
         console.log(error);

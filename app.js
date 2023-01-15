@@ -13,6 +13,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(express.json());
 
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
@@ -21,11 +22,11 @@ const dbConnect = require('./mongodb/mongodb');
 
 const indexRouter = require('./routes/index');
 const groupRouter = require('./routes/group');
-const imageRouter = require('./routes/image');
+const fileRouter = require('./routes/file');
 
 app.use('/', indexRouter);
 app.use('/group', groupRouter);
-app.use('/image', imageRouter);
+app.use('/file', fileRouter);
 
 dbConnect();
 

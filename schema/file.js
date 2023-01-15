@@ -1,19 +1,19 @@
 const { gql } = require('apollo-server-express');
 
-const imageTypeDefs = gql`
+const fileTypeDefs = gql`
   type Query {
-    images: [Image]
-    image (id: ID!): Image
+    files: [File]
+    file (id: ID!): File
   }
-  type Image {
+  type File {
     _id: ID
     createdAt: Date
     updatedAt: Date
     name: String
-    desc: String
-    filename: String
     mimetype: String
+    size: Int
+    path: String
   }
 `;
 
-module.exports = imageTypeDefs;
+module.exports = fileTypeDefs;

@@ -11,6 +11,7 @@ const groupTypeDefs = gql`
     createdAt: Date
     updatedAt: Date
     name: String
+    englishName: String
     artists: [Artist]
     debutDate: Date
     logo: File
@@ -28,13 +29,15 @@ const groupTypeDefs = gql`
   }
   input createGroupInput {
     name: String!
+    englishName: String
     debutDate: Date!
     artists: [ArtistInput]
-    logo: ID
+    logo: ID!
     color: String
   }
   input updateGroupInput {
     name: String
+    englishName: String
     debutDate: Date
     artists: [ID]
     logo: ID

@@ -2,6 +2,8 @@ const Group = require('../models/group');
 const Artist = require('../models/artist');
 const File = require('../models/file');
 
+const { getFindDoc } = require('../common/pagination');
+
 const groupResolvers = {
   Query: {
     async groups (_, __) {
@@ -33,9 +35,8 @@ const groupResolvers = {
       const sortField = args.sortField || 'createdAt';
       const sortOrder = args.sortOrder || 1;
       const page = args.page || 0;
-
       try {
-        const data = await Group.find()
+        const data = await Group.find(getFindDoc(args.filter))
           .sort({ [sortField]: sortOrder })
           .limit(args.perPage)
           .skip(args.perPage * page)

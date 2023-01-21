@@ -6,6 +6,10 @@ const archiveTypeDefs = require('./archive');
 const fileTypeDefs = require('./file');
 
 const typeDefs = gql`
+  input FilterOption {
+    q: String
+    fields: [String]
+  }
   ${groupTypeDefs}
   ${artistTypeDefs}
   ${archiveTypeDefs}

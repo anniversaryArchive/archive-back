@@ -10,6 +10,7 @@ const typeDefs = gql`
   input FilterOption {
     q: String
     fields: [String]
+    flds: Object
   }
   ${groupTypeDefs}
   ${artistTypeDefs}

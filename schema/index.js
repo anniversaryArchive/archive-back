@@ -6,6 +6,7 @@ const archiveTypeDefs = require('./archive');
 const fileTypeDefs = require('./file');
 
 const typeDefs = gql`
+  scalar Object
   input FilterOption {
     q: String
     fields: [String]

@@ -30,17 +30,19 @@ const groupResolvers = {
      * - perPage(Int): 한 페이지에 보여줄 데이터 수 
      * - sortField(String): 데이터 정렬할 필드 이름
      * - sortOrder(Int): 1: 오름차순, -1: 내림차순
+     * - filter(FilterOption)
      */
     async GroupPagination (_, args) {
       const sortField = args.sortField || 'createdAt';
       const sortOrder = args.sortOrder || 1;
       const page = args.page || 0;
+      const doc = getFindDoc(args.filter);
       try {
-        const data = await Group.find(getFindDoc(args.filter))
+        const data = await Group.find(doc)
           .sort({ [sortField]: sortOrder })
           .limit(args.perPage)
           .skip(args.perPage * page)
-        const groupTotal = await Group.find().countDocuments({});
+        const groupTotal = await Group.find(doc).countDocuments({});
         const total = groupTotal;
         return { data, total };
       } catch (error) {

@@ -4,7 +4,7 @@ const groupTypeDefs = gql`
   type Query {
     groups:[Group]
     group (id: ID!): Group
-    GroupPagination (page: Int, perPage: Int, sortField: String, sortOrder: String, includeSolo: Boolean): GroupPage
+    GroupPagination (page: Int, perPage: Int, sortField: String, sortOrder: Int): GroupPage
   }
   type Group {
     _id: ID

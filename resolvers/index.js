@@ -2,8 +2,10 @@ const groupResolvers = require('./group');
 const artistResolvers = require('./artist');
 const archiveResolvers = require('./archive');
 const fileResolvers = require('./file');
+const { ObjectScalarType } = require('./object');
 
 const resolvers = {
+  Object: ObjectScalarType,
   Group: groupResolvers.Group,
   Artist: artistResolvers.Artist,
   Query: {

@@ -2,6 +2,8 @@ const Group = require('../models/group');
 const Artist = require('../models/artist');
 const File = require('../models/file');
 
+const { getFindDoc } = require('../common/pagination');
+
 const groupResolvers = {
   Query: {
     async groups (_, __) {
@@ -24,35 +26,24 @@ const groupResolvers = {
     },
     /**
      * Group을 Pagination으로 가져온다.
-     * - includeSolo 가 true인 경우, 뒤에 Solo Artist도 포함한다.
+     * - page(Int): 현재 페이지 (0부터 시작)
+     * - perPage(Int): 한 페이지에 보여줄 데이터 수 
+     * - sortField(String): 데이터 정렬할 필드 이름
+     * - sortOrder(Int): 1: 오름차순, -1: 내림차순
+     * - filter(FilterOption)
      */
     async GroupPagination (_, args) {
       const sortField = args.sortField || 'createdAt';
-      const sortOrder = (!args.sortOrder || args.sortOrder === '1') ? 'asc' : 'desc';
+      const sortOrder = args.sortOrder || 1;
       const page = args.page || 0;
-
+      const doc = getFindDoc(args.filter);
       try {
-        let data = await Group.find()
+        const data = await Group.find(doc)
           .sort({ [sortField]: sortOrder })
           .limit(args.perPage)
           .skip(args.perPage * page)
-        const groupTotal = await Group.find().countDocuments({});
-        let total = groupTotal;
-
-        // 솔로 아티스트가 포함인 경우, 뒤에 솔로 아티스트도 포함해서 리스트를 보여준다.
-        if (args.includeSolo && data.length < args.perPage) {
-          total += await Artist.find({ group: { $exists: false } }).countDocuments({});
-          const skip = (args.page * args.perPage) - groupTotal + data.length;
-          const artists = await Artist.find({ group: { $exists: false } })
-            .sort({ [sortField]: sortOrder })
-            .limit(args.perPage - data.length)
-            .skip(skip);
-          data = data.concat(artists.map((artist) => {
-            artist.logo = artist.file;
-            artist.isSoloArtist = true
-            return artist;
-          }));
-        }
+        const groupTotal = await Group.find(doc).countDocuments({});
+        const total = groupTotal;
         return { data, total };
       } catch (error) {
         console.log(error);

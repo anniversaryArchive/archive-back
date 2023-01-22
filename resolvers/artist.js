@@ -2,6 +2,8 @@ const Artist = require('../models/artist');
 const Group = require('../models/group');
 const File = require('../models/file');
 
+const { getFindDoc } = require('../common/pagination');
+
 const artistResolvers = {
   Query: {
     async artists (_, __) {
@@ -22,17 +24,26 @@ const artistResolvers = {
         throw error;
       }
     },
-    async artistPagination (_, args) {
+    /**
+     * Artist를 Pagination으로 가져온다.
+     * - page(Int): 현재 페이지 (0부터 시작)
+     * - perPage(Int): 한 페이지에 보여줄 데이터 수 
+     * - sortField(String): 데이터 정렬할 필드 이름
+     * - sortOrder(Int): 1: 오름차순, -1: 내림차순
+     * - filter(FilterOption)
+     */
+    async ArtistPagination (_, args) {
       const sortField = args.sortField || 'createdAt';
-      const sortOrder = (!args.sortOrder || args.sortOrder === '1') ? 'asc' : 'desc';
+      const sortOrder = args.sortOrder || 1;
       const page = args.page || 0;
-      const filter = args.filter || {};
+      const doc = getFindDoc(args.filter);
+
       try {
-        const artists = await Artist.find(filter)
+        const artists = await Artist.find(doc)
           .sort({ [sortField]: sortOrder })
           .limit(args.perPage)
           .skip(args.perPage * page)
-        const total = await Artist.find(filter).countDocuments({});
+        const total = await Artist.find(doc).countDocuments({});
         return { data: artists, total };
       } catch (error) {
         console.log(error);

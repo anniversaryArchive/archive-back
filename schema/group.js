@@ -31,7 +31,8 @@ const groupTypeDefs = gql`
     name: String!
     englishName: String
     debutDate: Date!
-    artists: [ArtistInput]
+    artists: [ID]
+    newArtists: [ArtistInput]
     logo: ID!
     color: String
   }

@@ -77,21 +77,26 @@ const groupResolvers = {
      */
     async createGroup (_, args) {
       try {
-        const { artists, debutDate } = args.input;
+        const { artists, newArtists, debutDate } = args.input;
         
         // 아티스트 생성 시 group._id가 필요하기 때문에 위에서 그룹 생성을 먼저 해준다.
         const group = new Group({ ... args.input });
         const result = await group.save();
         const id = result._id;
 
-        // 그룹 내 아티스트 생성
-        if (artists && artists.length) {
-          artists.forEach((artist) => {
+        // 그룹 내 새로운 아티스트 생성
+        if (newArtists && newArtists.length) {
+          newArtists.forEach((artist) => {
             // 개인 데뷔 일자가 없는 경우, 그룹의 데뷔 일자로 넣어줍니다.
             if (!artist.debutDate) { artist.debutDate = debutDate }
             artist.group = id;
           });
-          await Artist.insertMany(artists);
+          await Artist.insertMany(newArtists);
+        }
+
+        // 아티스트에 그룹 연결
+        if (artists && artists.length) {
+          await Artist.updateMany({ _id: artists }, { $set: { group: id } });
         }
         return await Group.findById(id);
       } catch (error) {

@@ -107,6 +107,12 @@ const groupResolvers = {
     async updateGroup (_, args) {
       const defaultValue = { name: '', englishName: '', updatedAt: Date.now(), debutDate: null };
       try {
+        const { artists } = args.input;
+        // 아티스트에 그룹 연결
+        if (artists && artists.length) {
+          await Artist.updateMany({ _id: artists }, { $set: { group: args.id } });
+        }
+
         const updateValue = Object.assign(defaultValue, args.input);
         const updateDoc = { $set: updateValue };
         const result = await Group.updateOne({ _id: args.id }, updateDoc);
@@ -118,6 +124,12 @@ const groupResolvers = {
     },
     async patchGroup (_, args) {
       try {
+        const { artists } = args.input;
+        // 아티스트에 그룹 연결
+        if (artists && artists.length) {
+          await Artist.updateMany({ _id: artists }, { $set: { group: args.id } });
+        }
+
         const updateDoc = { $set: { ... args.input, updatedAt: Date.now() } };
         const result = await Group.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;

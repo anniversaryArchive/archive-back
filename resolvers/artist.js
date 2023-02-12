@@ -1,6 +1,7 @@
 const Artist = require('../models/artist');
 const Group = require('../models/group');
 const File = require('../models/file');
+const { ApolloError } = require('apollo-server-express');
 
 const { getFindDoc } = require('../common/pagination');
 
@@ -72,8 +73,24 @@ const artistResolvers = {
     }
   },
   Mutation: {
+    /**
+     * 아티스트 생성
+     * Error Code
+     * - 1001: 데뷔일자와 그룹 ID 둘 다 없는 경우
+     */
     async createArtist (_, args) {
       try {
+        const { debutDate, group } = args.input;
+
+        // 데뷔날짜가 없는 경우, 그룹 id가 있으면 그룹의 데뷔날짜를 넣어준다.
+        if (!debutDate) {
+          if (!group) {
+            throw new ApolloError('The debut date is a must.', 1001, {});
+          }
+          const findGroup = await Group.findById(group);
+          if (findGroup) { args.input = group.debutDate; }
+        }
+        
         const artist = new Artist({ ... args.input });
         const result = await artist.save();
         return result;

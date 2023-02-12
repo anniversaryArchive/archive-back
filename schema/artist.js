@@ -26,7 +26,7 @@ const artistTypeDefs = gql`
   }
   input createArtistInput {
     name: String!
-    debutDate: Date!
+    debutDate: Date
     birthDay: Date!
     group: ID
     image: ID!

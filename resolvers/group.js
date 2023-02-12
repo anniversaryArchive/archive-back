@@ -4,6 +4,26 @@ const File = require('../models/file');
 
 const { getFindDoc } = require('../common/pagination');
 
+async function updateArtists (id, artists) {
+  try {
+    // 기존에 있는 그룹 내 아티스트 리스트 가져오기 
+    const orgArtists = await Artist.find({ group: id });
+    const removeArtists = orgArtists.filter((artist) => {
+      return !artists.some((a) => a === `${artist._id}`);
+    }).map((artist) => `${artist._id}`);
+
+    // 아티스트 그룹 연결 풀기 
+    if (removeArtists && removeArtists.length) {
+      await Artist.updateMany({ _id: removeArtists }, { $set: { group: null } });
+    }
+
+    // 아티스트에 그룹 연결
+    if (artists && artists.length) {
+      await Artist.updateMany({ _id: artists }, { $set: { group: id } });
+    }
+  } catch (error) { console.error(error); }
+}
+
 const groupResolvers = {
   Query: {
     async groups (_, __) {
@@ -108,10 +128,7 @@ const groupResolvers = {
       const defaultValue = { name: '', englishName: '', updatedAt: Date.now(), debutDate: null };
       try {
         const { artists } = args.input;
-        // 아티스트에 그룹 연결
-        if (artists && artists.length) {
-          await Artist.updateMany({ _id: artists }, { $set: { group: args.id } });
-        }
+        await updateArtists(args.id, artists);
 
         const updateValue = Object.assign(defaultValue, args.input);
         const updateDoc = { $set: updateValue };
@@ -125,10 +142,7 @@ const groupResolvers = {
     async patchGroup (_, args) {
       try {
         const { artists } = args.input;
-        // 아티스트에 그룹 연결
-        if (artists && artists.length) {
-          await Artist.updateMany({ _id: artists }, { $set: { group: args.id } });
-        }
+        await updateArtists(args.id, artists);
 
         const updateDoc = { $set: { ... args.input, updatedAt: Date.now() } };
         const result = await Group.updateOne({ _id: args.id }, updateDoc);

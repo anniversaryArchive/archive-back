@@ -14,6 +14,7 @@ const archiveTypeDefs = gql`
     _id: ID
     name: String
     themeName: String
+    artist: Artist
     address: String
     lat: Float
     lng: Float
@@ -30,6 +31,7 @@ const archiveTypeDefs = gql`
   input createArchiveInput {
     name: String!
     themeName: String
+    artist: ID!
     address: String!
     lat: Float!
     lng: Float!
@@ -46,6 +48,7 @@ const archiveTypeDefs = gql`
   input updateArchiveInput {
     name: String!
     themeName: String!
+    artist: ID!
     address: String!
     lat: Float!
     lng: Float!
@@ -62,6 +65,7 @@ const archiveTypeDefs = gql`
   input patchArchiveInput {
     name: String
     themeName: String
+    artist: ID
     address: String
     lat: Float
     lng: Float

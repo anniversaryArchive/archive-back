@@ -4,6 +4,11 @@ const archiveTypeDefs = gql`
   type Query {
     archives: [Archive]
     archive (id: ID!): Archive
+    ArchivePagination (page: Int, perPage: Int, sortField: String, sortOrder: Int, filter: FilterOption): ArchivePage
+  }
+  type ArchivePage {
+    data: [Archive]
+    total: Int
   }
   type Archive {
     _id: ID

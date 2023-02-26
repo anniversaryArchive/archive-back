@@ -1,4 +1,5 @@
 const Archive = require('../models/archive');
+const { getFindDoc } = require('../common/pagination');
 
 const archiveResolvers = {
   Query: {
@@ -15,6 +16,32 @@ const archiveResolvers = {
       try {
         const archive = await Archive.findById(args.id);
         return archive;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+    /**
+     * Archive를 Pagination으로 가져온다.
+     * - page(Int): 현재 페이지 (0부터 시작)
+     * - perPage(Int): 한 페이지에 보여줄 데이터 수 
+     * - sortField(String): 데이터 정렬할 필드 이름
+     * - sortOrder(Int): 1: 오름차순, -1: 내림차순
+     * - filter(FilterOption)
+     */
+    async ArchivePagination (_, args) {
+      const sortField = args.sortField || 'createdAt';
+      const sortOrder = args.sortOrder || 1;
+      const page = args.page || 0;
+      const doc = getFindDoc(args.filter);
+
+      try {
+        const archives = await Archive.find(doc)
+          .sort({ [sortField]: sortOrder })
+          .limit(args.perPage)
+          .skip(args.perPage * page)
+        const total = await Archive.find(doc).countDocuments({});
+        return { data: archives, total };
       } catch (error) {
         console.log(error);
         throw error;

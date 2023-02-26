@@ -1,4 +1,6 @@
 const Archive = require('../models/archive');
+const Artist = require('../models/artist');
+const File = require('../models/file')
 const { getFindDoc } = require('../common/pagination');
 
 const archiveResolvers = {
@@ -47,6 +49,35 @@ const archiveResolvers = {
         throw error;
       }
     },
+  },
+  Archive: {
+    async artist (_, __) {
+      try {
+        const artist = await Artist.findById(_.artist);
+        return artist;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
+    async mainImage (_, __) {
+      try {
+        const image = await File.findById(_.mainImage);
+        return image;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
+    async images (_, __) {
+      try {
+        const images = await File.find({ _id: { $in: _.images } })
+        return images
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    }
   },
   Mutation: {
     async createArchive (_, args) {

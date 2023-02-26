@@ -10,6 +10,14 @@ const archiveTypeDefs = gql`
     data: [Archive]
     total: Int
   }
+  type CustomTime {
+    hour: Int
+    minute: Int
+  }
+  input CustomTimeInput {
+    hour: Int
+    minute: Int
+  }
   type Archive {
     _id: ID
     name: String
@@ -21,8 +29,8 @@ const archiveTypeDefs = gql`
     organizer: String
     startDate: Date
     endDate: Date
-    openTime: Date
-    closeTime: Date
+    openTime: CustomTime
+    closeTime: CustomTime
     mainImage: File
     images:[File]
     phoneNumber: String
@@ -38,8 +46,8 @@ const archiveTypeDefs = gql`
     organizer: String
     startDate: Date!
     endDate: Date!
-    openTime: Date
-    closeTime: Date
+    openTime: CustomTimeInput
+    closeTime: CustomTimeInput
     mainImage: ID
     images:[ID]
     phoneNumber: String
@@ -55,8 +63,8 @@ const archiveTypeDefs = gql`
     organizer: String!
     startDate: Date!
     endDate: Date!
-    openTime: Date
-    closeTime: Date
+    openTime: CustomTimeInput
+    closeTime: CustomTimeInput
     mainImage: ID!
     images:[ID]
     phoneNumber: String
@@ -72,8 +80,8 @@ const archiveTypeDefs = gql`
     organizer: String
     startDate: Date
     endDate: Date
-    openTime: Date
-    closeTime: Date
+    openTime: CustomTimeInput
+    closeTime: CustomTimeInput
     mainImage: ID
     images:[ID]
     phoneNumber: String

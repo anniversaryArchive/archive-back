@@ -8,6 +8,7 @@ const resolvers = {
   Object: ObjectScalarType,
   Group: groupResolvers.Group,
   Artist: artistResolvers.Artist,
+  Archive: archiveResolvers.Archive,
   Query: {
     ... groupResolvers.Query,
     ... artistResolvers.Query,

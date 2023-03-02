@@ -5,6 +5,7 @@ const archiveSchema = new mongoose.Schema({
   themeName: { type: String, required: true },                  // 카페 테마 명 
   artist: { type: mongoose.Types.ObjectId, required: true },    // 아티스트
   address: { type: String, required: true },                    // 주소
+  detailAddress: String,                                        // 상세 주소
   lat: { type: Number, default: 0.0 },                          // 위도
   lng: { type: Number, default: 0.0 },                          // 경도  
   organizer: { type: String, required: true },                  // 주최자 (트위터 아이디)

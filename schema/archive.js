@@ -24,6 +24,7 @@ const archiveTypeDefs = gql`
     themeName: String
     artist: Artist
     address: String
+    detailAddress: String
     lat: Float
     lng: Float
     organizer: String
@@ -41,6 +42,7 @@ const archiveTypeDefs = gql`
     themeName: String
     artist: ID!
     address: String!
+    detailAddress: String
     lat: Float!
     lng: Float!
     organizer: String
@@ -58,6 +60,7 @@ const archiveTypeDefs = gql`
     themeName: String!
     artist: ID!
     address: String!
+    detailAddress: String
     lat: Float!
     lng: Float!
     organizer: String!
@@ -75,6 +78,7 @@ const archiveTypeDefs = gql`
     themeName: String
     artist: ID
     address: String
+    detailAddress: String
     lat: Float
     lng: Float
     organizer: String

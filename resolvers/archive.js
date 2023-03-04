@@ -1,7 +1,15 @@
 const Archive = require('../models/archive');
+const Group = require('../models/group');
 const Artist = require('../models/artist');
 const File = require('../models/file')
 const { getFindDoc } = require('../common/pagination');
+const { ApolloError } = require('apollo-server-express');
+
+function checkArtistOrGroup ({ artist, group }) {
+  if (!artist && !group) {
+    throw new ApolloError('Either artist or group must exist.', 1002, {});
+  }
+}
 
 const archiveResolvers = {
   Query: {
@@ -60,6 +68,15 @@ const archiveResolvers = {
         throw error;
       }
     },
+    async group (_, __) {
+      try {
+        const group = await Group.findById(_.group);
+        return group;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
     async mainImage (_, __) {
       try {
         const image = await File.findById(_.mainImage);
@@ -81,6 +98,7 @@ const archiveResolvers = {
   },
   Mutation: {
     async createArchive (_, args) {
+      checkArtistOrGroup(args.input);
       try {
         const archive = new Archive({ ... args.input });
         const result = await archive.save();
@@ -91,6 +109,7 @@ const archiveResolvers = {
       }
     },
     async updateArchive (_, args) {
+      checkArtistOrGroup(args.input);
       try {
         const updateDoc = { $set: { ... args.input } };
         const result = await Archive.updateOne({ _id: args.id }, updateDoc);

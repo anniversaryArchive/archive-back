@@ -11,6 +11,15 @@ function checkArtistOrGroup ({ artist, group }) {
   }
 }
 
+function initDate (date) {
+  date = new Date(date);
+  date.setHours(0);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  date.setDate(date.getDate() + 1);
+  return date;
+}
+
 const archiveResolvers = {
   Query: {
     async archives (_, __) {
@@ -38,12 +47,24 @@ const archiveResolvers = {
      * - sortField(String): 데이터 정렬할 필드 이름
      * - sortOrder(Int): 1: 오름차순, -1: 내림차순
      * - filter(FilterOption)
+     * - start
+     * - end
      */
     async ArchivePagination (_, args) {
       const sortField = args.sortField || 'createdAt';
       const sortOrder = args.sortOrder || 1;
       const page = args.page || 0;
       const doc = getFindDoc(args.filter);
+
+      let { start, end } = args;
+      if (end) {
+        end = initDate(end);
+        doc.startDate = { $lte: end.toISOString() };
+      }
+      if (start) { 
+        start = initDate(start);
+        doc.endDate = { $gte: start.toISOString() };
+      }
 
       try {
         const archives = await Archive.find(doc)

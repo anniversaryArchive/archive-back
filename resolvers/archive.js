@@ -1,7 +1,24 @@
 const Archive = require('../models/archive');
+const Group = require('../models/group');
 const Artist = require('../models/artist');
 const File = require('../models/file')
 const { getFindDoc } = require('../common/pagination');
+const { ApolloError } = require('apollo-server-express');
+
+function checkArtistOrGroup ({ artist, group }) {
+  if (!artist && !group) {
+    throw new ApolloError('Either artist or group must exist.', 1002, {});
+  }
+}
+
+function initDate (date) {
+  date = new Date(date);
+  date.setHours(0);
+  date.setMinutes(0);
+  date.setSeconds(0);
+  date.setDate(date.getDate() + 1);
+  return date;
+}
 
 const archiveResolvers = {
   Query: {
@@ -30,12 +47,24 @@ const archiveResolvers = {
      * - sortField(String): 데이터 정렬할 필드 이름
      * - sortOrder(Int): 1: 오름차순, -1: 내림차순
      * - filter(FilterOption)
+     * - start
+     * - end
      */
     async ArchivePagination (_, args) {
       const sortField = args.sortField || 'createdAt';
       const sortOrder = args.sortOrder || 1;
       const page = args.page || 0;
       const doc = getFindDoc(args.filter);
+
+      let { start, end } = args;
+      if (end) {
+        end = initDate(end);
+        doc.startDate = { $lte: end.toISOString() };
+      }
+      if (start) { 
+        start = initDate(start);
+        doc.endDate = { $gte: start.toISOString() };
+      }
 
       try {
         const archives = await Archive.find(doc)
@@ -55,6 +84,15 @@ const archiveResolvers = {
       try {
         const artist = await Artist.findById(_.artist);
         return artist;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
+    async group (_, __) {
+      try {
+        const group = await Group.findById(_.group);
+        return group;
       } catch (error) {
         console.error(error);
         throw error;
@@ -81,6 +119,7 @@ const archiveResolvers = {
   },
   Mutation: {
     async createArchive (_, args) {
+      checkArtistOrGroup(args.input);
       try {
         const archive = new Archive({ ... args.input });
         const result = await archive.save();
@@ -91,6 +130,7 @@ const archiveResolvers = {
       }
     },
     async updateArchive (_, args) {
+      checkArtistOrGroup(args.input);
       try {
         const updateDoc = { $set: { ... args.input } };
         const result = await Archive.updateOne({ _id: args.id }, updateDoc);

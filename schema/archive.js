@@ -4,7 +4,7 @@ const archiveTypeDefs = gql`
   type Query {
     archives: [Archive]
     archive (id: ID!): Archive
-    ArchivePagination (page: Int, perPage: Int, sortField: String, sortOrder: Int, filter: FilterOption): ArchivePage
+    ArchivePagination (page: Int, perPage: Int, sortField: String, sortOrder: Int, filter: FilterOption, start: Date, end: Date): ArchivePage
   }
   type ArchivePage {
     data: [Archive]
@@ -23,6 +23,7 @@ const archiveTypeDefs = gql`
     name: String
     themeName: String
     artist: Artist
+    group: Group
     address: String
     detailAddress: String
     lat: Float
@@ -40,7 +41,8 @@ const archiveTypeDefs = gql`
   input createArchiveInput {
     name: String!
     themeName: String
-    artist: ID!
+    artist: ID
+    group: ID
     address: String!
     detailAddress: String
     lat: Float!
@@ -58,7 +60,8 @@ const archiveTypeDefs = gql`
   input updateArchiveInput {
     name: String!
     themeName: String!
-    artist: ID!
+    artist: ID
+    group: ID
     address: String!
     detailAddress: String
     lat: Float!
@@ -77,6 +80,7 @@ const archiveTypeDefs = gql`
     name: String
     themeName: String
     artist: ID
+    group: ID
     address: String
     detailAddress: String
     lat: Float

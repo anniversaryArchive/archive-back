@@ -131,8 +131,13 @@ const archiveResolvers = {
     },
     async updateArchive (_, args) {
       checkArtistOrGroup(args.input);
+
+      const defaultValue = { updateAt: Date.now(), images: [] };
+      for (const field of ['name', 'themeName', 'artist', 'group', 'address', 'detailAddress', 'lat', 'lng', 'organizer', 'startDate', 'endDate', 'openTime', 'closeTime', 'mainImage', 'phoneNumber', 'link']) {
+        defaultValue[field] = null;
+      }
       try {
-        const updateDoc = { $set: { ... args.input } };
+        const updateDoc = Object.assign(defaultValue, args.input);
         const result = await Archive.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) {
@@ -142,7 +147,7 @@ const archiveResolvers = {
     },
     async patchArchive (_, args) {
       try {
-        const updateDoc = { $set: args.input };
+        const updateDoc = { $set: { ... args.input, updateAt: Date.now() } };
         const result = await Archive.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) {

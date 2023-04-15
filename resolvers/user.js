@@ -2,6 +2,23 @@ const User = require('../models/user');
 const axios = require('axios');
 const { ApolloError } = require('apollo-server-express');
 
+const googleApi = 'https://www.googleapis.com/oauth2/v1/userinfo';
+
+async function getGoogleUserInfo(accessToken) {
+  try {
+    const response = await axios.get(`${googleApi}?access_token=${accessToken}`);
+    return response.data;
+  } catch (error) { return error.response.data; }
+}
+
+function onErrorGoogle(error) {
+  const code = error.code;
+  switch (code) {
+    case 401: throw new ApolloError('Invalid token.', 401, {});
+    default: throw new ApolloError('Fail', 500, {});
+  }
+}
+
 const userResolvers = {
   Query: {
     async users (_, __) {
@@ -19,12 +36,12 @@ const userResolvers = {
       const { accessToken, provider } = args;
       try {
         if (!provider || provider === 'google') {
-          const response = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${accessToken}`);
-          if (response.data) {
-            const { email } = response.data;
-            const user = await User.findOne({ email });
-            return user;
-          }
+          const data = await getGoogleUserInfo(accessToken);
+          if (!data) { return; }
+          if (data.error) { onErrorGoogle(data.error); }
+          const { email } = data;
+          const user = await User.findOne({ email });
+          return user;
         }
       } catch (error) { throw error; }
       return;
@@ -34,17 +51,15 @@ const userResolvers = {
       const { accessToken, provider } = args;
       try {
         if (!provider || provider === 'google') {
-          const response = await axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${accessToken}`);
-          if (response.data) {
-            const { id: providerId, email, name, picture: image } = response.data;
-            const findUser = await User.findOne({ email });
-            if (findUser) {
-              throw new ApolloError('Already SignUp', 1001, {});
-            }
-            const user = new User({ name, email, provider: 'google', providerId, image, token: accessToken });
-            const result = await user.save();
-            return result;
-          }
+          const data = await getGoogleUserInfo(accessToken);
+          if (!data) { return; }
+          if (data.error) { onErrorGoogle(data.error); }
+          const { id: providerId, email, name, picture: image } = data;
+          const findUser = await User.findOne({ email });
+          if (findUser) { throw new ApolloError('Already SignUp', 1001, {}); }
+          const user = new User({ name, email, provider: 'google', providerId, image, token: accessToken });
+          const result = await user.save();
+          return result;
         }
       } catch (error) { throw error; }
       return;

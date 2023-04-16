@@ -3,6 +3,7 @@ const artistResolvers = require('./artist');
 const archiveResolvers = require('./archive');
 const fileResolvers = require('./file');
 const favoriteResolvers = require('./favorite');
+const userResolvers = require('./user');
 const { ObjectScalarType } = require('./object');
 
 const resolvers = {
@@ -17,12 +18,14 @@ const resolvers = {
     ... archiveResolvers.Query,
     ... fileResolvers.Query,
     ... favoriteResolvers.Query,
+    ... userResolvers.Query,
   },
   Mutation: {
     ... groupResolvers.Mutation,
     ... artistResolvers.Mutation,
     ... archiveResolvers.Mutation,
     ... favoriteResolvers.Mutation,
+    ... userResolvers.Mutation,
   }
 };
 

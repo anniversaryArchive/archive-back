@@ -63,10 +63,12 @@ const favoriteResolvers = {
      */
     async createFavorite (_, args, context) {
       try {
-        // TODO: 이미 있는 즐겨찾기인 경우, throw
         const { archive } = args;
         const user = getUserId(context);
-        const favorite = new Favorite({ archive, user });
+        const doc = { archive, user };
+        const findFavorite = await Favorite.findOne(doc);
+        if (findFavorite) { return findFavorite; }
+        const favorite = new Favorite(doc);
         const result = await favorite.save();
         return result;
       } catch (error) {

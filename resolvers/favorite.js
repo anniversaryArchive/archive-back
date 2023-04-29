@@ -58,9 +58,6 @@ const favoriteResolvers = {
     },
   },
   Mutation: {
-    /**
-     * Group 생성 시, Group 내 Artist도 한 번에 생성 가능
-     */
     async createFavorite (_, args, context) {
       try {
         const { archive } = args;

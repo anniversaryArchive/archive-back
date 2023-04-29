@@ -36,8 +36,6 @@ dbConnect();
 const schema = applyMiddleware(makeExecutableSchema({ typeDefs, resolvers }), ...[permissions]);
 
 const server = new ApolloServer({
-  // typeDefs,
-  // resolvers,
   schema,
   introspection: true,
   playground: true,

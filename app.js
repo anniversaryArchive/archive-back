@@ -51,6 +51,10 @@ const server = new ApolloServer({
         })
       : ApolloServerPluginLandingPageLocalDefault({ footer: false }),
   ],
+  context: (data) => {
+    const { req, reply } = data;
+    return { request: req, reply };
+  },
 });
 
 server.start().then(_ => {

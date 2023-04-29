@@ -1,3 +1,3 @@
-const isAuthorized = require('./isAuthorized.js');
+const { isAuthorized } = require('./isAuthorized.js');
 
-module.exports = isAuthorized;
+module.exports = { isAuthorized };

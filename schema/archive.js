@@ -37,6 +37,7 @@ const archiveTypeDefs = gql`
     images:[File]
     phoneNumber: String
     link: String
+    favorite: Boolean
   }
   input createArchiveInput {
     name: String!

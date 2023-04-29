@@ -16,12 +16,8 @@ const favoriteTypeDefs = gql`
     total: Int!
   }
   
-  input FavoriteInput {
-    user: ID!
-    archive: ID!
-  }
   type Mutation {
-    createFavorite (input: FavoriteInput!): Favorite
+    createFavorite (archive: ID!): Favorite
     removeFavorite (id: ID!): Boolean
   }
 `;

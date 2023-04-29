@@ -1,9 +1,11 @@
 const Archive = require('../models/archive');
 const Group = require('../models/group');
 const Artist = require('../models/artist');
-const File = require('../models/file')
+const File = require('../models/file');
+const Favorite = require('../models/favorite')
 const { getFindDoc } = require('../common/pagination');
 const { ApolloError } = require('apollo-server-express');
+const { getUserId } = require('../utils');
 
 function checkArtistOrGroup ({ artist, group }) {
   if (!artist && !group) {
@@ -111,6 +113,16 @@ const archiveResolvers = {
       try {
         const images = await File.find({ _id: { $in: _.images } })
         return images
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
+    async favorite (item, _, context) {
+      try {
+        const user = getUserId(context);
+        const favorite = await Favorite.findOne({ user, archive: item._id });
+        return !!favorite;
       } catch (error) {
         console.error(error);
         throw error;

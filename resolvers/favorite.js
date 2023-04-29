@@ -2,6 +2,7 @@ const Favorite = require('../models/favorite');
 const User = require('../models/user');
 const Archive = require('../models/archive');
 
+const { getUserId } = require('../utils');
 const { getFindDoc } = require('../common/pagination');
 
 const favoriteResolvers = {
@@ -14,11 +15,14 @@ const favoriteResolvers = {
      * - sortOrder(Int): 1: 오름차순, -1: 내림차순
      * - filter(FilterOption)
      */
-    async FavoritePagination (_, args) {
+    async FavoritePagination (_, args, context) {
+      const userId = getUserId(context);
       const sortField = args.sortField || 'createdAt';
       const sortOrder = args.sortOrder || 1;
       const page = args.page || 0;
-      const doc = getFindDoc(args.filter);
+      const filter = args.filter || {};
+      filter.flds = Object.assign({}, filter.flds, { user: userId });
+      const doc = getFindDoc(filter);
       try {
         const data = await Favorite.find(doc)
           .sort({ [sortField]: sortOrder })
@@ -57,9 +61,12 @@ const favoriteResolvers = {
     /**
      * Group 생성 시, Group 내 Artist도 한 번에 생성 가능
      */
-    async createFavorite (_, args) {
+    async createFavorite (_, args, context) {
       try {
-        const favorite = new Favorite({ ... args.input });
+        // TODO: 이미 있는 즐겨찾기인 경우, throw
+        const { archive } = args;
+        const user = getUserId(context);
+        const favorite = new Favorite({ archive, user });
         const result = await favorite.save();
         return result;
       } catch (error) {

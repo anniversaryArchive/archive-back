@@ -3,9 +3,11 @@ const { isAuthorized } = require('./rules/index.js');
 
 const permissions = shield({
   Query: {
-    users: isAuthorized,
+    FavoritePagination: isAuthorized,
   },
   Mutation: {
+    createFavorite: isAuthorized,
+    removeFavorite: isAuthorized,
   },
 });
 

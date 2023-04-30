@@ -4,6 +4,9 @@ const {
   ApolloServerPluginLandingPageLocalDefault,
   ApolloServerPluginLandingPageProductionDefault
 } = require('apollo-server-core');
+const { makeExecutableSchema } = require('@graphql-tools/schema');
+const { applyMiddleware } = require('graphql-middleware');
+const { permissions } = require('./guards/index.js');
 require('dotenv').config();
 
 const port = process.env.PORT || 3000;
@@ -30,9 +33,10 @@ app.use('/file', fileRouter);
 
 dbConnect();
 
+const schema = applyMiddleware(makeExecutableSchema({ typeDefs, resolvers }), ...[permissions]);
+
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  schema,
   introspection: true,
   playground: true,
   csrfPrevention: true,
@@ -45,6 +49,10 @@ const server = new ApolloServer({
         })
       : ApolloServerPluginLandingPageLocalDefault({ footer: false }),
   ],
+  context: (data) => {
+    const { req, reply } = data;
+    return { request: req, reply };
+  },
 });
 
 server.start().then(_ => {

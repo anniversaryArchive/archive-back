@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const axios = require('axios');
 const { ApolloError } = require('apollo-server-express');
+const { signToken } = require('../utils');
 
 const googleApi = 'https://www.googleapis.com/oauth2/v1/userinfo';
 
@@ -41,7 +42,10 @@ const userResolvers = {
           if (data.error) { onErrorGoogle(data.error); }
           const { email } = data;
           const user = await User.findOne({ email });
-          return user;
+          return {
+            user,
+            token: signToken({ userId: user._id }),
+          };
         }
       } catch (error) { throw error; }
       return;
@@ -57,7 +61,7 @@ const userResolvers = {
           const { id: providerId, email, name, picture: image } = data;
           const findUser = await User.findOne({ email });
           if (findUser) { throw new ApolloError('Already SignUp', 1001, {}); }
-          const user = new User({ name, email, provider: 'google', providerId, image, token: accessToken });
+          const user = new User({ name, email, provider: 'google', providerId, image });
           const result = await user.save();
           return result;
         }

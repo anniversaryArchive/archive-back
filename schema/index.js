@@ -4,6 +4,7 @@ const groupTypeDefs = require('./group');
 const artistTypeDefs = require('./artist');
 const archiveTypeDefs = require('./archive');
 const fileTypeDefs = require('./file');
+const favoriteTypeDefs = require('./favorite');
 const userTypeDefs = require('./user');
 
 const typeDefs = gql`
@@ -17,6 +18,7 @@ const typeDefs = gql`
   ${artistTypeDefs}
   ${archiveTypeDefs}
   ${fileTypeDefs}
+  ${favoriteTypeDefs}
   ${userTypeDefs}
   scalar Date
 `;

@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const axios = require('axios');
 const { ApolloError } = require('apollo-server-express');
+const { signToken } = require('../utils');
 
 const googleApi = 'https://www.googleapis.com/oauth2/v1/userinfo';
 const naverApi = 'https://nid.naver.com/oauth2.0/token';
@@ -21,7 +22,6 @@ async function getNaverUserInfo(code) {
     const naverResponse = await axios.get('https://openapi.naver.com/v1/nid/me', {
       headers: { Authorization: `Bearer ${token}` }
     });
-    console.log('data : ', naverResponse.data.response);
     return naverResponse.data.response;
   } catch (error) { return error.response.data; }
 }
@@ -64,7 +64,10 @@ const userResolvers = {
         }
         if (!email) { return; }
         const user = await User.findOne({ email });
-        return user;
+        return {
+          user,
+          token: signToken({ userId: user._id }),
+        };
       } catch (error) { throw error; }
     },
 

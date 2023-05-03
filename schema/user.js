@@ -11,12 +11,16 @@ const userTypeDefs = gql`
     email: String
     provider: String
     providerId: String
-    token: String
     image: String
   }
 
+  type Auth {
+    user: User
+    token: String
+  }
+
   type Mutation {
-    signIn (code: String!, provider: String): User
+    signIn (code: String!, provider: String): Auth
     signUp (code: String!, provider: String): User
     withdraw (id: ID!): Boolean
   }

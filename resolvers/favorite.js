@@ -1,5 +1,6 @@
 const Favorite = require('../models/favorite');
 const User = require('../models/user');
+const Group = require('../models/group');
 const Archive = require('../models/archive');
 
 const { ApolloError } = require('apollo-server-express');
@@ -36,7 +37,20 @@ const favoriteResolvers = {
         console.log(error);
         throw error;
       }
-    }
+    },
+
+    async FavoriteGroupList (_, __, context) {
+      const user = getUserId(context);
+      try {
+        const data = await Favorite.find({ user });
+        const groupIds = data.map((d) => d.group);
+        const groups = await Group.find({ _id: groupIds });
+        return groups;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
   },
   Favorite: {
     async user (_, __) {

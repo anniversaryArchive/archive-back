@@ -3,6 +3,7 @@ const { gql } = require('apollo-server-express');
 const favoriteTypeDefs = gql`
   type Query {
     FavoritePagination (page: Int, perPage: Int, sortField: String, sortOrder: Int, filter: FilterOption): FavoritePage
+    FavoriteGroupList: [Group]
   }
   type Favorite {
     _id: ID

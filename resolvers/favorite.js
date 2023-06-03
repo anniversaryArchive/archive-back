@@ -2,6 +2,8 @@ const Favorite = require('../models/favorite');
 const User = require('../models/user');
 const Archive = require('../models/archive');
 
+const { ApolloError } = require('apollo-server-express');
+
 const { getUserId } = require('../utils');
 const { getFindDoc } = require('../common/pagination');
 
@@ -65,6 +67,11 @@ const favoriteResolvers = {
         const doc = { archive, user };
         const findFavorite = await Favorite.findOne(doc);
         if (findFavorite) { return findFavorite; }
+        const findArchive = await Archive.findOne({ _id: archive });
+        if (!findArchive) { 
+          throw new ApolloError('해당 카페(Archive)를 찾을 수가 없습니다.', 1003, {});
+        }
+        doc.group = findArchive.group;
         const favorite = new Favorite(doc);
         const result = await favorite.save();
         return result;

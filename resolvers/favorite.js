@@ -28,9 +28,9 @@ const favoriteResolvers = {
      * - perPage(Int): 한 페이지에 보여줄 데이터 수
      * - sortField(String): 데이터 정렬할 필드 이름
      * - sortOrder(Int): 1: 오름차순, -1: 내림차순
-     * - group
-     * - start
-     * - end
+     * - group : archive.group filtering
+     * - start : archive.startDate - endDate filtering
+     * - end : archive.startDate - endDate filtering
      */
     async FavoritePagination (_, args, context) {
       const userId = getUserId(context);

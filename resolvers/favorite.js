@@ -32,6 +32,7 @@ const favoriteResolvers = {
       try {
         const skip = args.perPage * page;
         let pipelines = [
+          // archive id 를 이용해 archiveInfo field로 archive 데이터를 가져온다.
           { '$addFields': { 'archiveId': { '$toObjectId': '$archive' } } },
           {
             '$lookup': {
@@ -42,12 +43,16 @@ const favoriteResolvers = {
             }
           },
           { '$unwind': '$archiveInfo' },
+          // 현재 user의 데이터만 가져오도록 filtering
           { '$match': { 'user': ObjectId(userId) } },
         ];
 
+        // group filtering
         if (args.group) {
           pipelines.push({ '$match': { 'archiveInfo.group': ObjectId(args.group) } });
         }
+
+        // start date ~ end date filtering
         if (args.end) {
           pipelines.push({ '$match': { 'archiveInfo.startDate': { '$lte': initDate(args.end) } } });
         }

@@ -86,8 +86,21 @@ const favoriteResolvers = {
     async FavoriteGroupList (_, __, context) {
       const user = getUserId(context);
       try {
-        const data = await Favorite.find({ user });
-        const groupIds = data.map((d) => d.group);
+        const pipelines = [
+          { '$addFields': { 'archiveId': { '$toObjectId': '$archive' } } },
+          {
+            '$lookup': {
+              'from': 'archives',
+              'localField': 'archive',
+              'foreignField': '_id',
+              'as': 'archiveInfo'
+            }
+          },
+          { '$unwind': '$archiveInfo' },
+          { '$match': { 'user': ObjectId(user) } },
+        ];
+        const data = await Favorite.aggregate(pipelines);
+        const groupIds = data.map((d) => d.archiveInfo.group);
         const groups = await Group.find({ _id: groupIds });
         return groups;
       } catch (error) {
@@ -129,7 +142,6 @@ const favoriteResolvers = {
         if (!findArchive) {
           throw new ApolloError('해당 카페(Archive)를 찾을 수가 없습니다.', 1003, {});
         }
-        doc.group = findArchive.group;
         const favorite = new Favorite(doc);
         const result = await favorite.save();
         return result;

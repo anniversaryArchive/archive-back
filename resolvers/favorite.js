@@ -10,15 +10,7 @@ const Archive = require('../models/archive');
 const { ApolloError } = require('apollo-server-express');
 
 const { getUserId } = require('../utils');
-
-function initDate (date) {
-  date = new Date(date);
-  date.setHours(0);
-  date.setMinutes(0);
-  date.setSeconds(0);
-  date.setDate(date.getDate() + 1);
-  return date;
-}
+const { initDate } = require('../common/date');
 
 const favoriteResolvers = {
   Query: {

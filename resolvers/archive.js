@@ -6,20 +6,12 @@ const Favorite = require('../models/favorite')
 const { getFindDoc } = require('../common/pagination');
 const { ApolloError } = require('apollo-server-express');
 const { getUserId } = require('../utils');
+const { initDate } = require('../common/date');
 
 function checkArtistOrGroup ({ artist, group }) {
   if (!artist && !group) {
     throw new ApolloError('Either artist or group must exist.', 1002, {});
   }
-}
-
-function initDate (date) {
-  date = new Date(date);
-  date.setHours(0);
-  date.setMinutes(0);
-  date.setSeconds(0);
-  date.setDate(date.getDate() + 1);
-  return date;
 }
 
 const archiveResolvers = {
@@ -45,7 +37,7 @@ const archiveResolvers = {
     /**
      * Archive를 Pagination으로 가져온다.
      * - page(Int): 현재 페이지 (0부터 시작)
-     * - perPage(Int): 한 페이지에 보여줄 데이터 수 
+     * - perPage(Int): 한 페이지에 보여줄 데이터 수
      * - sortField(String): 데이터 정렬할 필드 이름
      * - sortOrder(Int): 1: 오름차순, -1: 내림차순
      * - filter(FilterOption)
@@ -63,7 +55,7 @@ const archiveResolvers = {
         end = initDate(end);
         doc.startDate = { $lte: end.toISOString() };
       }
-      if (start) { 
+      if (start) {
         start = initDate(start);
         doc.endDate = { $gte: start.toISOString() };
       }

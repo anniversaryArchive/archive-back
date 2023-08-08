@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const axios = require('axios');
 const { ApolloError } = require('apollo-server-express');
-const { signToken } = require('../utils');
+const { signToken, verifyToken } = require('../utils');
 
 const googleApi = 'https://www.googleapis.com/oauth2/v1/userinfo';
 
@@ -49,6 +49,21 @@ const userResolvers = {
         }
       } catch (error) { throw error; }
       return;
+    },
+
+    async signInTest (_, args) {
+      const { token } = args;
+      try {
+        const data = verifyToken(token);
+        const { userId } = data;
+        if (!userId) { return null; }
+
+        const user = await User.findById(userId);
+        return {
+          user,
+          token: signToken({ userId: user._id }),
+        };
+      } catch (error) { throw error; }
     },
 
     async signUp (_, args) {

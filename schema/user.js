@@ -21,6 +21,7 @@ const userTypeDefs = gql`
 
   type Mutation {
     signIn (accessToken: String!, provider: String): Auth
+    signInTest (token: String!): Auth
     signUp (accessToken: String!, provider: String): User
     withdraw (id: ID!): Boolean
   }

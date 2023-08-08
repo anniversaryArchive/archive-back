@@ -2,7 +2,7 @@ const { gql } = require('apollo-server-express');
 
 const favoriteTypeDefs = gql`
   type Query {
-    FavoritePagination (page: Int, perPage: Int, sortField: String, sortOrder: Int, filter: FilterOption): FavoritePage
+    FavoritePagination (page: Int, perPage: Int, sortField: String, sortOrder: Int, group: ID, start: Date, end: Date): FavoritePage
     FavoriteGroupList: [Group]
   }
   type Favorite {
@@ -16,7 +16,7 @@ const favoriteTypeDefs = gql`
     data: [Favorite]
     total: Int!
   }
-  
+
   type Mutation {
     createFavorite (archive: ID!): Favorite
     removeFavorite (id: ID!): Boolean

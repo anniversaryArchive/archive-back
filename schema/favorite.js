@@ -19,7 +19,7 @@ const favoriteTypeDefs = gql`
 
   type Mutation {
     createFavorite (archive: ID!): Favorite
-    removeFavorite (id: ID!): Boolean
+    removeFavorite (archive: ID!): Boolean
   }
 `;
 

@@ -147,9 +147,11 @@ const favoriteResolvers = {
         throw error;
       }
     },
-    async removeFavorite (_, args) {
+    async removeFavorite (_, args, context) {
       try {
-        const result = await Favorite.deleteOne({ _id: args.id });
+        const { archive } = args;
+        const user = getUserId(context);
+        const result = await Favorite.deleteOne({ archive, user });
         return result.deletedCount === 1;
       } catch (error) {
         throw error;

@@ -22,7 +22,7 @@ function onErrorGoogle(error) {
 
 const userResolvers = {
   Query: {
-    async users (_, __) {
+    async users(_, __) {
       try {
         const users = await User.find();
         return users;
@@ -33,7 +33,7 @@ const userResolvers = {
     },
   },
   Mutation: {
-    async signIn (_, args) {
+    async signIn(_, args) {
       const { accessToken, provider } = args;
       try {
         if (!provider || provider === 'google') {
@@ -51,7 +51,7 @@ const userResolvers = {
       return;
     },
 
-    async signInTest (_, args) {
+    async signInTest(_, args) {
       const { token } = args;
       try {
         const data = verifyToken(token);
@@ -66,7 +66,7 @@ const userResolvers = {
       } catch (error) { throw error; }
     },
 
-    async signUp (_, args) {
+    async signUp(_, args) {
       const { accessToken, provider } = args;
       try {
         if (!provider || provider === 'google') {
@@ -83,7 +83,7 @@ const userResolvers = {
       } catch (error) { throw error; }
       return;
     },
-    async withdraw (_, args) {
+    async withdraw(_, args) {
       try {
         const result = await User.deleteOne({ _id: args.id });
         return result.deletedCount === 1;

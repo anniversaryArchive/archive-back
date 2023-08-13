@@ -20,6 +20,8 @@ const archiveTypeDefs = gql`
   }
   type Archive {
     _id: ID
+    createdAt: Date
+    updatedAt: Date
     name: String
     themeName: String
     artist: Artist

@@ -49,24 +49,23 @@ const userResolvers = {
   Mutation: {
     async signIn(_, args) {
       const { code, provider } = args;
-      let email;
+      let data;
       try {
         if (!provider || provider === 'google') {
-          const data = await getGoogleUserInfo(code);
+          data = await getGoogleUserInfo(code);
           if (!data) { return; }
           if (data.error) { onErrorGoogle(data.error); }
-          email = data.email;
         } else if (provider === 'naver') {
-          const data = await getNaverUserInfo(code);
+          data = await getNaverUserInfo(code);
           if (!data) { return; }
           if (data.error) { throw new ApolloError(data.error_description, 1001, {}); }
-          email = data.email;
         }
-        if (!email) { return; }
-        const user = await User.findOne({ email });
+        if (!data.email) { return; }
+        const user = await User.findOne({ email: data.email });
         return {
           user,
-          token: signToken({ userId: user._id }),
+          token: user && signToken({ userId: user._id }),
+          info: { ...data, provider: provider || 'google' },
         };
       } catch (error) { throw error; }
     },
@@ -107,6 +106,7 @@ const userResolvers = {
         return result;
       } catch (error) { throw error; }
     },
+
     async withdraw(_, args) {
       try {
         const result = await User.deleteOne({ _id: args.id });

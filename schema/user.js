@@ -21,6 +21,13 @@ const userTypeDefs = gql`
     provider: String
   }
 
+  input ProviderInfoInput {
+    id: String
+    email: String
+    name: String
+    provider: String
+  }
+
   type Auth {
     user: User
     token: String
@@ -31,6 +38,7 @@ const userTypeDefs = gql`
     signIn (code: String!, provider: String): Auth
     signInTest (token: String!): Auth
     signUp (code: String!, provider: String): User
+    providerSignUp (info: ProviderInfoInput!): User
     withdraw (id: ID!): Boolean
   }
 `;

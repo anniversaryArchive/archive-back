@@ -107,6 +107,15 @@ const userResolvers = {
       } catch (error) { throw error; }
     },
 
+    async providerSignUp(_, args) {
+      try {
+        const { id: providerId, email, name, picture: image, provider } = args.info;
+        const user = new User({ name, email, provider, providerId, image });
+        const result = await user.save();
+        return result;
+      } catch (error) { throw error; }
+    },
+
     async withdraw(_, args) {
       try {
         const result = await User.deleteOne({ _id: args.id });

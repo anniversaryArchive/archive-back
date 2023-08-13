@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const axios = require('axios');
 const { ApolloError } = require('apollo-server-express');
-const { signToken } = require('../utils');
+const { signToken, verifyToken } = require('../utils');
 
 const googleApi = 'https://www.googleapis.com/oauth2/v1/userinfo';
 const naverApi = 'https://nid.naver.com/oauth2.0/token';
@@ -25,7 +25,7 @@ async function getNaverUserInfo(code) {
     return naverResponse.data.response;
   } catch (error) { return error.response.data; }
 }
- 
+
 function onErrorGoogle(error) {
   const code = error.code;
   switch (code) {
@@ -36,7 +36,7 @@ function onErrorGoogle(error) {
 
 const userResolvers = {
   Query: {
-    async users (_, __) {
+    async users(_, __) {
       try {
         const users = await User.find();
         return users;
@@ -47,7 +47,7 @@ const userResolvers = {
     },
   },
   Mutation: {
-    async signIn (_, args) {
+    async signIn(_, args) {
       const { code, provider } = args;
       let email;
       try {
@@ -71,7 +71,22 @@ const userResolvers = {
       } catch (error) { throw error; }
     },
 
-    async signUp (_, args) {
+    async signInTest(_, args) {
+      const { token } = args;
+      try {
+        const data = verifyToken(token);
+        const { userId } = data;
+        if (!userId) { return null; }
+
+        const user = await User.findById(userId);
+        return {
+          user,
+          token: user ? signToken({ userId: user._id }) : null,
+        };
+      } catch (error) { throw error; }
+    },
+
+    async signUp(_, args) {
       const { code, provider } = args;
       let data;
       try {
@@ -92,7 +107,7 @@ const userResolvers = {
         return result;
       } catch (error) { throw error; }
     },
-    async withdraw (_, args) {
+    async withdraw(_, args) {
       try {
         const result = await User.deleteOne({ _id: args.id });
         return result.deletedCount === 1;

@@ -53,12 +53,23 @@ const server = new ApolloServer({
     const { req, reply } = data;
     return { request: req, reply };
   },
+  formatResponse: (response, requestContext) => {
+    if (response.errors?.length) {
+      const { message } = response.errors[0];
+      switch (message) {
+        case 'Not Authorised!':
+          requestContext.response.http.status = 401;
+          break;
+      }
+    }
+    return response;
+  }
 });
 
 server.start().then(_ => {
   server.applyMiddleware({ app, path: '/' });
-  app.listen({ port }, () => 
+  app.listen({ port }, () =>
     console.log(`Gateway API running at port: ${port}`)
-  );  
+  );
 });
 

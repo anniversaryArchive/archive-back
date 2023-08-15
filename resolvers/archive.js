@@ -8,7 +8,7 @@ const { ApolloError } = require('apollo-server-express');
 const { getUserId } = require('../utils');
 const { initDate } = require('../common/date');
 
-function checkArtistOrGroup ({ artist, group }) {
+function checkArtistOrGroup({ artist, group }) {
   if (!artist && !group) {
     throw new ApolloError('Either artist or group must exist.', 1002, {});
   }
@@ -16,7 +16,7 @@ function checkArtistOrGroup ({ artist, group }) {
 
 const archiveResolvers = {
   Query: {
-    async archives (_, __) {
+    async archives(_, __) {
       try {
         const archives = await Archive.find();
         return archives;
@@ -25,7 +25,7 @@ const archiveResolvers = {
         throw error;
       }
     },
-    async archive (_, args) {
+    async archive(_, args) {
       try {
         const archive = await Archive.findById(args.id);
         return archive;
@@ -44,7 +44,7 @@ const archiveResolvers = {
      * - start
      * - end
      */
-    async ArchivePagination (_, args) {
+    async ArchivePagination(_, args) {
       const sortField = args.sortField || 'createdAt';
       const sortOrder = args.sortOrder || 1;
       const page = args.page || 0;
@@ -74,7 +74,7 @@ const archiveResolvers = {
     },
   },
   Archive: {
-    async artist (_, __) {
+    async artist(_, __) {
       try {
         const artist = await Artist.findById(_.artist);
         return artist;
@@ -83,7 +83,7 @@ const archiveResolvers = {
         throw error;
       }
     },
-    async group (_, __) {
+    async group(_, __) {
       try {
         const group = await Group.findById(_.group);
         return group;
@@ -92,7 +92,7 @@ const archiveResolvers = {
         throw error;
       }
     },
-    async mainImage (_, __) {
+    async mainImage(_, __) {
       try {
         const image = await File.findById(_.mainImage);
         return image;
@@ -101,7 +101,7 @@ const archiveResolvers = {
         throw error;
       }
     },
-    async images (_, __) {
+    async images(_, __) {
       try {
         const images = await File.find({ _id: { $in: _.images } })
         return images
@@ -110,7 +110,7 @@ const archiveResolvers = {
         throw error;
       }
     },
-    async favorite (item, _, context) {
+    async favorite(item, _, context) {
       try {
         const user = getUserId(context);
         const favorite = await Favorite.findOne({ user, archive: item._id });
@@ -122,10 +122,10 @@ const archiveResolvers = {
     }
   },
   Mutation: {
-    async createArchive (_, args) {
+    async createArchive(_, args) {
       checkArtistOrGroup(args.input);
       try {
-        const archive = new Archive({ ... args.input });
+        const archive = new Archive({ ...args.input });
         const result = await archive.save();
         return result;
       } catch (error) {
@@ -133,10 +133,10 @@ const archiveResolvers = {
         throw error;
       }
     },
-    async updateArchive (_, args) {
+    async updateArchive(_, args) {
       checkArtistOrGroup(args.input);
 
-      const defaultValue = { updateAt: Date.now(), images: [] };
+      const defaultValue = { updatedAt: Date.now(), images: [] };
       for (const field of ['name', 'themeName', 'artist', 'group', 'address', 'detailAddress', 'lat', 'lng', 'organizer', 'startDate', 'endDate', 'openTime', 'closeTime', 'mainImage', 'phoneNumber', 'link']) {
         defaultValue[field] = null;
       }
@@ -149,9 +149,9 @@ const archiveResolvers = {
         throw error;
       }
     },
-    async patchArchive (_, args) {
+    async patchArchive(_, args) {
       try {
-        const updateDoc = { $set: { ... args.input, updateAt: Date.now() } };
+        const updateDoc = { $set: { ...args.input, updatedAt: Date.now() } };
         const result = await Archive.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) {
@@ -159,7 +159,7 @@ const archiveResolvers = {
         throw error;
       }
     },
-    async removeArchive (_, args) {
+    async removeArchive(_, args) {
       try {
         const result = await Archive.deleteOne({ _id: args.id });
         return result.deletedCount === 1;

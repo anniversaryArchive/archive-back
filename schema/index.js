@@ -6,6 +6,7 @@ const archiveTypeDefs = require('./archive');
 const fileTypeDefs = require('./file');
 const favoriteTypeDefs = require('./favorite');
 const userTypeDefs = require('./user');
+const communicationBoardTypeDefs = require('./communicationBoard');
 
 const typeDefs = gql`
   scalar Object
@@ -20,6 +21,7 @@ const typeDefs = gql`
   ${fileTypeDefs}
   ${favoriteTypeDefs}
   ${userTypeDefs}
+  ${communicationBoardTypeDefs}
   scalar Date
 `;
 

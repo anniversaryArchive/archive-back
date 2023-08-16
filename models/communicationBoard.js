@@ -5,13 +5,13 @@ const communicationBoardSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },             // 마지막 업데이트 일자
   division: {
     type: String,
-    enum: ['notice', 'group', 'artist', 'archive'],
+    enum: ['notice', 'group', 'artist', 'archive', 'improvement', 'error'],
     default: 'notice'
   }, // 분류
   title: { type: String, required: true },  // 제목
   content: String,  // 내용
-  author: mongoose.Types.ObjectId,  // 작성자
-  data: mongoose.Types.Mixed, // 요청한 데이터
+  author: mongoose.Types.ObjectId,    // 작성자
+  data: mongoose.Schema.Types.Mixed,  // 요청한 데이터
   fixed: Boolean, // 고정 여부
   status: {
     type: String,

@@ -1,6 +1,7 @@
 const CommunicationBoard = require('../models/communicationBoard');
 const User = require('../models/user');
 const { getUserId } = require('../utils');
+const { getFindDoc } = require('../common/pagination');
 
 const communicationBoardResolvers = {
   Query: {
@@ -8,6 +9,25 @@ const communicationBoardResolvers = {
       try {
         const communicationBoard = await CommunicationBoard.findById(args.id);
         return communicationBoard;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
+
+    async CommunicationBoardPagination(_, args) {
+      const sortField = args.sortField || 'createdAt';
+      const sortOrder = args.sortOrder || 1;
+      const page = args.page || 0;
+      const doc = getFindDoc(args.filter);
+
+      try {
+        const communicationBoards = await CommunicationBoard.find(doc)
+          .sort({ [sortField]: sortOrder })
+          .limit(args.perPage)
+          .skip(args.perPage * page)
+        const total = await CommunicationBoard.find(doc).countDocuments({});
+        return { data: communicationBoards, total };
       } catch (error) {
         console.log(error);
         throw error;

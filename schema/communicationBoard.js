@@ -25,7 +25,8 @@ const communicationBoardTypeDefs = gql`
     reject
   }
   type CommunicationBoard {
-    _id: ID,
+    _id: ID
+    seq: Int
     createdAt: Date
     updatedAt: Date
     division: CommunicationBoardDivision

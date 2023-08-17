@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
+const autoIncrement = require('mongoose-auto-increment');
 
 const communicationBoardSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },             // 생성 일자
   updatedAt: { type: Date, default: Date.now },             // 마지막 업데이트 일자
+  seq: { type: Number, default: 0 },
   division: {
     type: String,
     enum: ['notice', 'group', 'artist', 'archive', 'improvement', 'error'],
@@ -19,6 +21,13 @@ const communicationBoardSchema = new mongoose.Schema({
     default: 'none',
   },  // 현재 상태
   message: String,  // 관리자 메시지
-});
+}, { collection: '', versionKey: false });
 
+autoIncrement.initialize(mongoose.connection);
+communicationBoardSchema.plugin(autoIncrement.plugin, {
+  model: 'communicationBoard',
+  field: 'seq',
+  startAt: 1, //시작
+  increment: 1 // 증가
+});
 module.exports = mongoose.model('communicationBoard', communicationBoardSchema);

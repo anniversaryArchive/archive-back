@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true },
   provider: { type: String, required: true },     // 'google', 'naver', 'twitter'
   providerId: { type: String, required: true },
+  role: { type: String, default: 'user' },
   image: String,
 });
 

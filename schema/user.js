@@ -12,6 +12,7 @@ const userTypeDefs = gql`
     provider: String
     providerId: String
     image: String
+    role: String
   }
 
   type ProviderInfo {

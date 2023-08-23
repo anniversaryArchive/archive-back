@@ -1,7 +1,19 @@
 const CommunicationBoard = require('../models/communicationBoard');
 const User = require('../models/user');
+const File = require('../models/file');
 const { getUserId } = require('../utils');
 const { getFindDoc } = require('../common/pagination');
+
+function initInput(input) {
+  const doc = { ...input };
+  for (const division of ['group', 'artist', 'archive']) {
+    if (input.division === division) {
+      doc.data = input[division];
+    }
+    delete doc[division];
+  }
+  return doc;
+}
 
 const communicationBoardResolvers = {
   Query: {
@@ -43,17 +55,24 @@ const communicationBoardResolvers = {
         console.error(error);
         throw error;
       }
-    }
+    },
+    async data(_, __) {
+      const { data } = _;
+      if (!data) { return data; }
+      const fields = ['logo', 'mainImage', 'image'];
+      try {
+        for (const field of fields) {
+          data[field] = await File.findById(data[field]);
+        }
+      } catch (error) { throw error; }
+      return data;
+    },
   },
   Mutation: {
     async createCommunicationBoard(_, args, context) {
       try {
-        const doc = { ...args.input };
+        const doc = initInput(args.input);
         doc.author = getUserId(context);
-        for (const division of ['group', 'artist', 'archive']) {
-          if (args.input.division) { doc.data = args.input[division]; }
-          delete doc[division];
-        }
         const communicationBoard = new CommunicationBoard(doc);
         const result = await communicationBoard.save();
         return result;
@@ -67,7 +86,7 @@ const communicationBoardResolvers = {
       const author = getUserId(context);
       const defaultValue = { updateAt: Date.now(), author };
       try {
-        const updateDoc = Object.assign(defaultValue, args.input);
+        const updateDoc = initInput(Object.assign(defaultValue, args.input));
         const result = await CommunicationBoard.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) {
@@ -78,7 +97,7 @@ const communicationBoardResolvers = {
     async patchCommunicationBoard(_, args) {
       // TODO: 같은 유저인지 체크
       try {
-        const updateDoc = { $set: { ...args.input, updateAt: Date.now() } };
+        const updateDoc = { $set: { ...initInput(args.input), updateAt: Date.now() } };
         const result = await CommunicationBoard.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) {

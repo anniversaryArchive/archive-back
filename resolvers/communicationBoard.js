@@ -1,6 +1,8 @@
+const { ApolloError } = require('apollo-server-express');
 const CommunicationBoard = require('../models/communicationBoard');
 const User = require('../models/user');
 const File = require('../models/file');
+const Group = require('../models/group');
 const { getUserId } = require('../utils');
 const { getFindDoc } = require('../common/pagination');
 
@@ -13,6 +15,17 @@ function initInput(input) {
     delete doc[division];
   }
   return doc;
+}
+
+// 게시글을 생성한 유저와 같은 유저인지 체크
+async function checkAuthor(id, author) {
+  try {
+    const communicationBoard = await CommunicationBoard.findById(id);
+    if (!communicationBoard) { return null; }
+    if (String(communicationBoard.author) !== author) {
+      throw new ApolloError('This user is not an author.', 403, {});
+    }
+  } catch (error) { throw error; }
 }
 
 const communicationBoardResolvers = {
@@ -62,7 +75,11 @@ const communicationBoardResolvers = {
       const fields = ['logo', 'mainImage', 'image'];
       try {
         for (const field of fields) {
+          if (!data[field]) { continue; }
           data[field] = await File.findById(data[field]);
+        }
+        if (data.group) {
+          data.group = await Group.findById(data.group);
         }
       } catch (error) { throw error; }
       return data;
@@ -82,10 +99,10 @@ const communicationBoardResolvers = {
       }
     },
     async updateCommunicationBoard(_, args, context) {
-      // TODO: 같은 유저인지 체크
       const author = getUserId(context);
-      const defaultValue = { updateAt: Date.now(), author };
       try {
+        await checkAuthor(args.id, author);
+        const defaultValue = { updateAt: Date.now(), author };
         const updateDoc = initInput(Object.assign(defaultValue, args.input));
         const result = await CommunicationBoard.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
@@ -94,9 +111,9 @@ const communicationBoardResolvers = {
         throw error;
       }
     },
-    async patchCommunicationBoard(_, args) {
-      // TODO: 같은 유저인지 체크
+    async patchCommunicationBoard(_, args, context) {
       try {
+        await checkAuthor(args.id, getUserId(context));
         const updateDoc = { $set: { ...initInput(args.input), updateAt: Date.now() } };
         const result = await CommunicationBoard.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
@@ -105,9 +122,9 @@ const communicationBoardResolvers = {
         throw error;
       }
     },
-    async removeCommunicationBoard(_, args) {
-      // TODO: 같은 유저인지 체크
+    async removeCommunicationBoard(_, args, context) {
       try {
+        await checkAuthor(args.id, getUserId(context));
         const result = await CommunicationBoard.deleteOne({ _id: args.id });
         return result.deletedCount === 1;
       } catch (error) {

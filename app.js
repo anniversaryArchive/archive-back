@@ -44,9 +44,9 @@ const server = new ApolloServer({
   plugins: [
     process.env.NODE_ENV === 'production'
       ? ApolloServerPluginLandingPageProductionDefault({
-          graphRef: process.env.APOLLO_GRAPH_REF,
-          footer: false,
-        })
+        graphRef: process.env.APOLLO_GRAPH_REF,
+        footer: false,
+      })
       : ApolloServerPluginLandingPageLocalDefault({ footer: false }),
   ],
   context: (data) => {
@@ -55,11 +55,14 @@ const server = new ApolloServer({
   },
   formatResponse: (response, requestContext) => {
     if (response.errors?.length) {
-      const { message } = response.errors[0];
+      const { message, extensions } = response.errors[0];
       switch (message) {
         case 'Not Authorised!':
           requestContext.response.http.status = 401;
           break;
+      }
+      if (extensions?.code === 403) {
+        requestContext.response.http.status = extensions.code;
       }
     }
     return response;

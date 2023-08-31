@@ -45,14 +45,16 @@ const communicationBoardResolvers = {
       const sortOrder = args.sortOrder || 1;
       const page = args.page || 0;
       const doc = getFindDoc(args.filter);
+      doc.fixed = { $ne: true };
 
       try {
+        const fixedCommunicationBoards = await CommunicationBoard.find({ fixed: true });
         const communicationBoards = await CommunicationBoard.find(doc)
           .sort({ [sortField]: sortOrder })
           .limit(args.perPage)
           .skip(args.perPage * page)
         const total = await CommunicationBoard.find(doc).countDocuments({});
-        return { data: communicationBoards, total };
+        return { data: [...fixedCommunicationBoards, ...communicationBoards], total };
       } catch (error) {
         console.log(error);
         throw error;
@@ -90,6 +92,7 @@ const communicationBoardResolvers = {
       try {
         const doc = initInput(args.input);
         doc.author = getUserId(context);
+        doc.fixed = doc.fixed || false;
         const communicationBoard = new CommunicationBoard(doc);
         const result = await communicationBoard.save();
         return result;

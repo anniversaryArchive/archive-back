@@ -4,6 +4,7 @@ const archiveResolvers = require('./archive');
 const fileResolvers = require('./file');
 const favoriteResolvers = require('./favorite');
 const userResolvers = require('./user');
+const communicationBoardResolvers = require('./communicationBoard');
 const { ObjectScalarType } = require('./object');
 
 const resolvers = {
@@ -12,20 +13,23 @@ const resolvers = {
   Artist: artistResolvers.Artist,
   Archive: archiveResolvers.Archive,
   Favorite: favoriteResolvers.Favorite,
+  CommunicationBoard: communicationBoardResolvers.CommunicationBoard,
   Query: {
-    ... groupResolvers.Query,
-    ... artistResolvers.Query,
-    ... archiveResolvers.Query,
-    ... fileResolvers.Query,
-    ... favoriteResolvers.Query,
-    ... userResolvers.Query,
+    ...groupResolvers.Query,
+    ...artistResolvers.Query,
+    ...archiveResolvers.Query,
+    ...fileResolvers.Query,
+    ...favoriteResolvers.Query,
+    ...userResolvers.Query,
+    ...communicationBoardResolvers.Query,
   },
   Mutation: {
-    ... groupResolvers.Mutation,
-    ... artistResolvers.Mutation,
-    ... archiveResolvers.Mutation,
-    ... favoriteResolvers.Mutation,
-    ... userResolvers.Mutation,
+    ...groupResolvers.Mutation,
+    ...artistResolvers.Mutation,
+    ...archiveResolvers.Mutation,
+    ...favoriteResolvers.Mutation,
+    ...userResolvers.Mutation,
+    ...communicationBoardResolvers.Mutation,
   }
 };
 

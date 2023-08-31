@@ -9,7 +9,8 @@ const permissions = shield({
   Mutation: {
     createFavorite: isAuthorized,
     removeFavorite: isAuthorized,
+    createCommunicationBoard: isAuthorized,
   },
-});
+}, { allowExternalErrors: true });
 
 module.exports = { permissions };

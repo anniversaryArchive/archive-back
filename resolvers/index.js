@@ -1,5 +1,5 @@
-const groupResolvers = require('./group');
-const artistResolvers = require('./artist');
+const { groupResolvers } = require('./group');
+const { artistResolvers } = require('./artist');
 const archiveResolvers = require('./archive');
 const fileResolvers = require('./file');
 const favoriteResolvers = require('./favorite');

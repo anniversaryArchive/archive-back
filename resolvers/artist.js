@@ -5,9 +5,31 @@ const { ApolloError } = require('apollo-server-express');
 
 const { getFindDoc } = require('../common/pagination');
 
+async function createArtist(data) {
+  try {
+    const { debutDate, group } = data;
+
+    // 데뷔날짜가 없는 경우, 그룹 id가 있으면 그룹의 데뷔날짜를 넣어준다.
+    if (!debutDate) {
+      if (!group) {
+        throw new ApolloError('The debut date is a must.', 1001, {});
+      }
+      const findGroup = await Group.findById(group);
+      if (findGroup) { data = group.debutDate; }
+    }
+
+    const artist = new Artist({ ...data });
+    const result = await artist.save();
+    return result;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 const artistResolvers = {
   Query: {
-    async artists (_, __) {
+    async artists(_, __) {
       try {
         const artists = await Artist.find();
         return artists;
@@ -16,7 +38,7 @@ const artistResolvers = {
         throw error;
       }
     },
-    async artist (_, args) {
+    async artist(_, args) {
       try {
         const artist = await Artist.findById(args.id);
         return artist;
@@ -28,12 +50,12 @@ const artistResolvers = {
     /**
      * Artist를 Pagination으로 가져온다.
      * - page(Int): 현재 페이지 (0부터 시작)
-     * - perPage(Int): 한 페이지에 보여줄 데이터 수 
+     * - perPage(Int): 한 페이지에 보여줄 데이터 수
      * - sortField(String): 데이터 정렬할 필드 이름
      * - sortOrder(Int): 1: 오름차순, -1: 내림차순
      * - filter(FilterOption)
      */
-    async ArtistPagination (_, args) {
+    async ArtistPagination(_, args) {
       const sortField = args.sortField || 'createdAt';
       const sortOrder = args.sortOrder || 1;
       const page = args.page || 0;
@@ -53,7 +75,7 @@ const artistResolvers = {
     },
   },
   Artist: {
-    async group (_, __) {
+    async group(_, __) {
       try {
         const group = await Group.findById(_.group);
         return group;
@@ -62,7 +84,7 @@ const artistResolvers = {
         throw error;
       }
     },
-    async image (_, __) {
+    async image(_, __) {
       try {
         const image = await File.findById(_.image);
         return image;
@@ -78,28 +100,15 @@ const artistResolvers = {
      * Error Code
      * - 1001: 데뷔일자와 그룹 ID 둘 다 없는 경우
      */
-    async createArtist (_, args) {
+    async createArtist(_, args) {
       try {
-        const { debutDate, group } = args.input;
-
-        // 데뷔날짜가 없는 경우, 그룹 id가 있으면 그룹의 데뷔날짜를 넣어준다.
-        if (!debutDate) {
-          if (!group) {
-            throw new ApolloError('The debut date is a must.', 1001, {});
-          }
-          const findGroup = await Group.findById(group);
-          if (findGroup) { args.input = group.debutDate; }
-        }
-        
-        const artist = new Artist({ ... args.input });
-        const result = await artist.save();
-        return result;
+        return await createArtist(args.input);
       } catch (error) {
         console.log(error);
         throw error;
       }
     },
-    async updateArtist (_, args) {
+    async updateArtist(_, args) {
       const defaultValue = { name: '', updatedAt: Date.now(), debutDate: null, birthDay: null, group: null };
       try {
         const updateValue = Object.assign(defaultValue, args.input);
@@ -111,9 +120,9 @@ const artistResolvers = {
         throw error;
       }
     },
-    async patchArtist (_, args) {
+    async patchArtist(_, args) {
       try {
-        const updateDoc = { $set: { ... args.input, updatedAt: Date.now() } };
+        const updateDoc = { $set: { ...args.input, updatedAt: Date.now() } };
         const result = await Artist.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) {
@@ -121,7 +130,7 @@ const artistResolvers = {
         throw error;
       }
     },
-    async removeArtist (_, args) {
+    async removeArtist(_, args) {
       try {
         const result = await Artist.deleteOne({ _id: args.id });
         return result.deletedCount === 1;
@@ -132,4 +141,4 @@ const artistResolvers = {
   }
 }
 
-module.exports = artistResolvers;
+module.exports = { artistResolvers, createArtist };

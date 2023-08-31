@@ -4,15 +4,46 @@ const File = require('../models/file');
 
 const { getFindDoc } = require('../common/pagination');
 
-async function updateArtists (id, artists) {
+async function createGroup(data) {
   try {
-    // 기존에 있는 그룹 내 아티스트 리스트 가져오기 
+    const { artists, newArtists, debutDate } = data;
+
+    // 아티스트 생성 시 group._id가 필요하기 때문에 위에서 그룹 생성을 먼저 해준다.
+    const group = new Group({ ...data });
+    const result = await group.save();
+    const id = result._id;
+
+    // 그룹 내 새로운 아티스트 생성
+    if (newArtists && newArtists.length) {
+      newArtists.forEach((artist) => {
+        // 개인 데뷔 일자가 없는 경우, 그룹의 데뷔 일자로 넣어줍니다.
+        if (!artist.debutDate) { artist.debutDate = debutDate }
+        artist.group = id;
+      });
+      await Artist.insertMany(newArtists);
+    }
+
+    // 아티스트에 그룹 연결
+    if (artists && artists.length) {
+      await Artist.updateMany({ _id: artists }, { $set: { group: id } });
+    }
+
+    return await Group.findById(id);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+async function updateArtists(id, artists) {
+  try {
+    // 기존에 있는 그룹 내 아티스트 리스트 가져오기
     const orgArtists = await Artist.find({ group: id });
     const removeArtists = orgArtists.filter((artist) => {
       return !artists.some((a) => a === `${artist._id}`);
     }).map((artist) => `${artist._id}`);
 
-    // 아티스트 그룹 연결 풀기 
+    // 아티스트 그룹 연결 풀기
     if (removeArtists && removeArtists.length) {
       await Artist.updateMany({ _id: removeArtists }, { $set: { group: null } });
     }
@@ -26,7 +57,7 @@ async function updateArtists (id, artists) {
 
 const groupResolvers = {
   Query: {
-    async groups (_, __) {
+    async groups(_, __) {
       try {
         const groups = await Group.find();
         return groups;
@@ -35,7 +66,7 @@ const groupResolvers = {
         throw error;
       }
     },
-    async group (_, args) {
+    async group(_, args) {
       try {
         const group = await Group.findById(args.id);
         return group;
@@ -47,12 +78,12 @@ const groupResolvers = {
     /**
      * Group을 Pagination으로 가져온다.
      * - page(Int): 현재 페이지 (0부터 시작)
-     * - perPage(Int): 한 페이지에 보여줄 데이터 수 
+     * - perPage(Int): 한 페이지에 보여줄 데이터 수
      * - sortField(String): 데이터 정렬할 필드 이름
      * - sortOrder(Int): 1: 오름차순, -1: 내림차순
      * - filter(FilterOption)
      */
-    async GroupPagination (_, args) {
+    async GroupPagination(_, args) {
       const sortField = args.sortField || 'createdAt';
       const sortOrder = args.sortOrder || 1;
       const page = args.page || 0;
@@ -72,7 +103,7 @@ const groupResolvers = {
     }
   },
   Group: {
-    async artists (_, __) {
+    async artists(_, __) {
       try {
         const artists = await Artist.find({ group: _._id });
         return artists;
@@ -81,7 +112,7 @@ const groupResolvers = {
         throw error;
       }
     },
-    async logo (_, __) {
+    async logo(_, __) {
       try {
         const file = await File.findById(_.logo);
         return file;
@@ -95,36 +126,15 @@ const groupResolvers = {
     /**
      * Group 생성 시, Group 내 Artist도 한 번에 생성 가능
      */
-    async createGroup (_, args) {
+    async createGroup(_, args) {
       try {
-        const { artists, newArtists, debutDate } = args.input;
-        
-        // 아티스트 생성 시 group._id가 필요하기 때문에 위에서 그룹 생성을 먼저 해준다.
-        const group = new Group({ ... args.input });
-        const result = await group.save();
-        const id = result._id;
-
-        // 그룹 내 새로운 아티스트 생성
-        if (newArtists && newArtists.length) {
-          newArtists.forEach((artist) => {
-            // 개인 데뷔 일자가 없는 경우, 그룹의 데뷔 일자로 넣어줍니다.
-            if (!artist.debutDate) { artist.debutDate = debutDate }
-            artist.group = id;
-          });
-          await Artist.insertMany(newArtists);
-        }
-
-        // 아티스트에 그룹 연결
-        if (artists && artists.length) {
-          await Artist.updateMany({ _id: artists }, { $set: { group: id } });
-        }
-        return await Group.findById(id);
+        return await createGroup(args.input);
       } catch (error) {
         console.log(error);
         throw error;
       }
     },
-    async updateGroup (_, args) {
+    async updateGroup(_, args) {
       const defaultValue = { name: '', englishName: '', updatedAt: Date.now(), debutDate: null };
       try {
         const { artists } = args.input;
@@ -139,12 +149,12 @@ const groupResolvers = {
         throw error;
       }
     },
-    async patchGroup (_, args) {
+    async patchGroup(_, args) {
       try {
         const { artists } = args.input;
         await updateArtists(args.id, artists);
 
-        const updateDoc = { $set: { ... args.input, updatedAt: Date.now() } };
+        const updateDoc = { $set: { ...args.input, updatedAt: Date.now() } };
         const result = await Group.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) {
@@ -152,7 +162,7 @@ const groupResolvers = {
         throw error;
       }
     },
-    async removeGroup (_, args) {
+    async removeGroup(_, args) {
       try {
         const result = await Group.deleteOne({ _id: args.id });
         return result.deletedCount === 1;
@@ -163,4 +173,4 @@ const groupResolvers = {
   }
 }
 
-module.exports = groupResolvers;
+module.exports = { groupResolvers, createGroup };

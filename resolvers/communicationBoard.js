@@ -3,8 +3,11 @@ const CommunicationBoard = require('../models/communicationBoard');
 const User = require('../models/user');
 const File = require('../models/file');
 const Group = require('../models/group');
+const Archive = require('../models/archive');
 const { getUserId } = require('../utils');
 const { getFindDoc } = require('../common/pagination');
+const { createGroup } = require('./group');
+const { createArtist } = require('./artist');
 
 function initInput(input) {
   const doc = { ...input };
@@ -25,6 +28,14 @@ async function checkAuthor(id, author) {
     if (String(communicationBoard.author) !== author) {
       throw new ApolloError('This user is not an author.', 403, {});
     }
+  } catch (error) { throw error; }
+}
+
+// 어드민 권한을 가진 계정인지 체크
+async function checkAdmin(id) {
+  try {
+    const findUser = await User.findById(id);
+    return findUser && findUser.role === 'admin';
   } catch (error) { throw error; }
 }
 
@@ -134,6 +145,54 @@ const communicationBoardResolvers = {
         throw error;
       }
     },
+
+    async acceptCommunicationBoard(_, args, context) {
+      try {
+        const checkedAdmin = await checkAdmin(getUserId(context));
+        if (!checkedAdmin) {
+          throw new ApolloError('This user is not an admin.', 403, {});
+        }
+
+        const communicationBoard = await CommunicationBoard.findById(args.id);
+        if (!communicationBoard) {
+          throw new ApolloError('not found communication board.', 404, {});
+        }
+        const { division, data } = communicationBoard;
+        let createdData;
+        switch (division) {
+          case 'group':
+            createdData = await createGroup(data);
+            break;
+          case 'artist':
+            createdData = await createArtist(data);
+            break;
+          case 'archive':
+            const archive = new Archive({ ...data });
+            createdData = await archive.save();
+            break;
+          default:
+            throw new ApolloError('해당 게시글은 제안 게시글이 아닙니다.', 405, {});
+        }
+        if (!createdData) { throw new ApolloError('제안한 데이터 생성에 실패했습니다.', 1001, {}); }
+
+        const set = { status: 'accept', message: args.message };
+        const updateDoc = { $set: set, updateAt: Date.now() };
+        const result = await CommunicationBoard.updateOne({ _id: args.id }, updateDoc);
+        return result.modifiedCount === 1;
+      } catch (error) { throw error; }
+    },
+    async rejectCommunicationBoard(_, args, context) {
+      try {
+        const checkedAdmin = await checkAdmin(getUserId(context));
+        if (!checkedAdmin) {
+          throw new ApolloError('This user is not an admin.', 403, {});
+        }
+        const set = { status: 'reject', message: args.message };
+        const updateDoc = { $set: set, updateAt: Date.now() };
+        const result = await CommunicationBoard.updateOne({ _id: args.id }, updateDoc);
+        return result.modifiedCount === 1;
+      } catch (error) { throw error; }
+    }
   }
 }
 

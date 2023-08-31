@@ -146,18 +146,22 @@ const communicationBoardResolvers = {
       }
     },
 
+    // 게시글 제안 승인
     async acceptCommunicationBoard(_, args, context) {
       try {
+        // 어드민 계정인지 확인
         const checkedAdmin = await checkAdmin(getUserId(context));
         if (!checkedAdmin) {
           throw new ApolloError('This user is not an admin.', 403, {});
         }
 
+        // 승인하려는 게시글이 있는 지 확인
         const communicationBoard = await CommunicationBoard.findById(args.id);
         if (!communicationBoard) {
           throw new ApolloError('not found communication board.', 404, {});
         }
         const { division, data } = communicationBoard;
+        // 게시글 구분 별, 승인 시 해당 데이터 생성
         let createdData;
         switch (division) {
           case 'group':
@@ -171,22 +175,28 @@ const communicationBoardResolvers = {
             createdData = await archive.save();
             break;
           default:
+            // 게시글 구분이 제안이 아닌 경우, 승인할 수 없다.
             throw new ApolloError('해당 게시글은 제안 게시글이 아닙니다.', 405, {});
         }
         if (!createdData) { throw new ApolloError('제안한 데이터 생성에 실패했습니다.', 1001, {}); }
 
+        // 게시글 상태 승인 상태로 변경
         const set = { status: 'accept', message: args.message };
         const updateDoc = { $set: set, updateAt: Date.now() };
         const result = await CommunicationBoard.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) { throw error; }
     },
+    // 게시글 제안 거절
     async rejectCommunicationBoard(_, args, context) {
       try {
+        // 어드민 계정인지 확인
         const checkedAdmin = await checkAdmin(getUserId(context));
         if (!checkedAdmin) {
           throw new ApolloError('This user is not an admin.', 403, {});
         }
+
+        // 게시글 상태 거절로 변경
         const set = { status: 'reject', message: args.message };
         const updateDoc = { $set: set, updateAt: Date.now() };
         const result = await CommunicationBoard.updateOne({ _id: args.id }, updateDoc);

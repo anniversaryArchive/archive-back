@@ -73,7 +73,7 @@ const favoriteResolvers = {
 
         const results = await Favorite.aggregate(pipelines);
         const { data, total } = results[0];
-        return { data, total };
+        return { data, total: total[0].count };
       } catch (error) {
         console.log(error);
         throw error;

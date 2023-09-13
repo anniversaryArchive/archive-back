@@ -202,7 +202,20 @@ const communicationBoardResolvers = {
         const result = await CommunicationBoard.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) { throw error; }
-    }
+    },
+
+    // 게시글 제안 재요청
+    async reRequestCommunicationBoard(_, args, context) {
+      try {
+        await checkAuthor(args.id, getUserId(context));
+        const updateDoc = { $set: { status: 'request', updateAt: Date.now() } };
+        const result = await CommunicationBoard.updateOne({ _id: args.id }, updateDoc);
+        return result.modifiedCount === 1;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
   }
 }
 

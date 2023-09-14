@@ -3,6 +3,7 @@ const CommunicationBoard = require('../models/communicationBoard');
 const User = require('../models/user');
 const File = require('../models/file');
 const Group = require('../models/group');
+const Artist = require('../models/artist');
 const Archive = require('../models/archive');
 const { getUserId } = require('../utils');
 const { getFindDoc } = require('../common/pagination');
@@ -93,6 +94,9 @@ const communicationBoardResolvers = {
         }
         if (data.group) {
           data.group = await Group.findById(data.group);
+        }
+        if (data.artist) {
+          data.artist = await Artist.findById(data.artist);
         }
       } catch (error) { throw error; }
       return data;
@@ -208,7 +212,7 @@ const communicationBoardResolvers = {
     async reRequestCommunicationBoard(_, args, context) {
       try {
         await checkAuthor(args.id, getUserId(context));
-        const updateDoc = { $set: { status: 'request', updateAt: Date.now() } };
+        const updateDoc = { $set: { status: 'request', message: '', updateAt: Date.now() } };
         const result = await CommunicationBoard.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) {

@@ -61,7 +61,8 @@ const server = new ApolloServer({
           requestContext.response.http.status = 401;
           break;
       }
-      if (extensions?.code === 403) {
+      const statusCodes = [403, 404, 405];
+      if (extensions && statusCodes.some((code) => code === extensions.code)) {
         requestContext.response.http.status = extensions.code;
       }
     }

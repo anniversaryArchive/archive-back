@@ -66,6 +66,9 @@ const communicationBoardTypeDefs = gql`
     updateCommunicationBoard (id: ID!, input: CommunicationBoardInput!): Boolean
     patchCommunicationBoard (id: ID!, input: patchCommunicationBoardInput!): Boolean
     removeCommunicationBoard (id: ID!): Boolean
+    acceptCommunicationBoard (id: ID!, message: String): Boolean
+    rejectCommunicationBoard (id: ID!, message: String!): Boolean
+    reRequestCommunicationBoard (id: ID!): Boolean
   }
 `
 

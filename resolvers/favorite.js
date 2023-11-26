@@ -24,7 +24,7 @@ const favoriteResolvers = {
      * - start : archive.startDate - endDate filtering
      * - end : archive.startDate - endDate filtering
      */
-    async FavoritePagination (_, args, context) {
+    async FavoritePagination(_, args, context) {
       const userId = getUserId(context);
       const sortField = args.sortField || 'createdAt';
       const sortOrder = args.sortOrder || 1;
@@ -33,42 +33,42 @@ const favoriteResolvers = {
         const skip = args.perPage * page;
         let pipelines = [
           // archive id 를 이용해 archiveInfo field로 archive 데이터를 가져온다.
-          { '$addFields': { 'archiveId': { '$toObjectId': '$archive' } } },
+          { $addFields: { archiveId: { $toObjectId: '$archive' } } },
           {
-            '$lookup': {
-              'from': 'archives',
-              'localField': 'archive',
-              'foreignField': '_id',
-              'as': 'archiveInfo'
-            }
+            $lookup: {
+              from: 'archives',
+              localField: 'archive',
+              foreignField: '_id',
+              as: 'archiveInfo',
+            },
           },
-          { '$unwind': '$archiveInfo' },
+          { $unwind: '$archiveInfo' },
           // 현재 user의 데이터만 가져오도록 filtering
-          { '$match': { 'user': ObjectId(userId) } },
+          { $match: { user: ObjectId(userId) } },
         ];
 
         // group filtering
         if (args.group) {
-          pipelines.push({ '$match': { 'archiveInfo.group': ObjectId(args.group) } });
+          pipelines.push({ $match: { 'archiveInfo.group': ObjectId(args.group) } });
         }
 
         // start date ~ end date filtering
         if (args.end) {
-          pipelines.push({ '$match': { 'archiveInfo.startDate': { '$lte': initDate(args.end) } } });
+          pipelines.push({ $match: { 'archiveInfo.startDate': { $lte: initDate(args.end) } } });
         }
         if (args.start) {
-          pipelines.push({ '$match': { 'archiveInfo.endDate': { '$gte': initDate(args.start) } } });
+          pipelines.push({ $match: { 'archiveInfo.endDate': { $gte: initDate(args.start) } } });
         }
 
         pipelines = [
           ...pipelines,
-          { '$sort': { [sortField]: sortOrder } },
+          { $sort: { [sortField]: sortOrder } },
           {
-            '$facet': {
+            $facet: {
               data: [{ $skip: skip }, { $limit: args.perPage }],
-              total: [{ $count: 'count' }]
-            }
-          }
+              total: [{ $count: 'count' }],
+            },
+          },
         ];
 
         const results = await Favorite.aggregate(pipelines);
@@ -80,24 +80,24 @@ const favoriteResolvers = {
       }
     },
 
-    async FavoriteGroupList (_, __, context) {
+    async GroupListInFavorite(_, __, context) {
       const user = getUserId(context);
       try {
         const pipelines = [
-          { '$addFields': { 'archiveId': { '$toObjectId': '$archive' } } },
+          { $addFields: { archiveId: { $toObjectId: '$archive' } } },
           {
-            '$lookup': {
-              'from': 'archives',
-              'localField': 'archive',
-              'foreignField': '_id',
-              'as': 'archiveInfo'
-            }
+            $lookup: {
+              from: 'archives',
+              localField: 'archive',
+              foreignField: '_id',
+              as: 'archiveInfo',
+            },
           },
-          { '$unwind': '$archiveInfo' },
-          { '$match': { 'user': ObjectId(user) } },
+          { $unwind: '$archiveInfo' },
+          { $match: { user: ObjectId(user) } },
         ];
         const data = await Favorite.aggregate(pipelines);
-        const groupIds = data.map((d) => d.archiveInfo.group);
+        const groupIds = data.map(d => d.archiveInfo.group);
         const groups = await Group.find({ _id: groupIds });
         return groups;
       } catch (error) {
@@ -107,7 +107,7 @@ const favoriteResolvers = {
     },
   },
   Favorite: {
-    async user (_, __) {
+    async user(_, __) {
       try {
         const user = await User.findById(_.user);
         return user;
@@ -117,7 +117,7 @@ const favoriteResolvers = {
       }
     },
 
-    async archive (_, __) {
+    async archive(_, __) {
       try {
         const archive = await Archive.findById(_.archive);
         return archive;
@@ -128,13 +128,15 @@ const favoriteResolvers = {
     },
   },
   Mutation: {
-    async createFavorite (_, args, context) {
+    async createFavorite(_, args, context) {
       try {
         const { archive } = args;
         const user = getUserId(context);
         const doc = { archive, user };
         const findFavorite = await Favorite.findOne(doc);
-        if (findFavorite) { return findFavorite; }
+        if (findFavorite) {
+          return findFavorite;
+        }
         const findArchive = await Archive.findOne({ _id: archive });
         if (!findArchive) {
           throw new ApolloError('해당 카페(Archive)를 찾을 수가 없습니다.', 1003, {});
@@ -147,7 +149,7 @@ const favoriteResolvers = {
         throw error;
       }
     },
-    async removeFavorite (_, args, context) {
+    async removeFavorite(_, args, context) {
       try {
         const { archive } = args;
         const user = getUserId(context);
@@ -157,7 +159,7 @@ const favoriteResolvers = {
         throw error;
       }
     },
-  }
-}
+  },
+};
 
 module.exports = favoriteResolvers;

@@ -3,6 +3,8 @@ const ObjectId = require('mongodb').ObjectID;
 const FavoriteGroup = require('../models/favoriteGroup');
 const Archive = require('../models/archive');
 
+const { getUserId } = require('../utils');
+
 // 생성한 유저와 같은 유저인지 체크
 async function checkAuthor(id, user) {
   try {

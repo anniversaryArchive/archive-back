@@ -24,8 +24,8 @@ const favoriteGroupTypeDefs = gql`
 
   type Mutation {
     createFavoriteGroup(input: FavoriteGroupInput!): FavoriteGroup
-    addArchive(id: ID!, archive: ID!): Boolean
-    removeArchive(id: ID!, archive: ID!): Boolean
+    addArchiveInFavoriteGroup(id: ID!, archive: ID!): Boolean
+    removeArchiveInFavoriteGroup(id: ID!, archive: ID!): Boolean
     updateArchives(id: ID!, archives: [ID]!): Boolean
   }
 `;

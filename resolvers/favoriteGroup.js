@@ -57,7 +57,7 @@ const favoriteGroupResolvers = {
       }
     },
 
-    async addArchive(_, args, context) {
+    async addArchiveInFavoriteGroup(_, args, context) {
       const { id, archive } = args;
       const archiveId = ObjectId(archive);
       try {
@@ -77,7 +77,7 @@ const favoriteGroupResolvers = {
       }
     },
 
-    async removeArchive(_, args, context) {
+    async removeArchiveInFavoriteGroup(_, args, context) {
       const { id, archive } = args;
       const archiveId = ObjectId(archive);
       try {

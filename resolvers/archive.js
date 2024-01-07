@@ -2,7 +2,7 @@ const Archive = require('../models/archive');
 const Group = require('../models/group');
 const Artist = require('../models/artist');
 const File = require('../models/file');
-const Favorite = require('../models/favorite')
+const FavoriteGroup = require('../models/favoriteGroup');
 const { getFindDoc } = require('../common/pagination');
 const { ApolloError } = require('apollo-server-express');
 const { getUserId } = require('../utils');
@@ -64,7 +64,7 @@ const archiveResolvers = {
         const archives = await Archive.find(doc)
           .sort({ [sortField]: sortOrder })
           .limit(args.perPage)
-          .skip(args.perPage * page)
+          .skip(args.perPage * page);
         const total = await Archive.find(doc).countDocuments({});
         return { data: archives, total };
       } catch (error) {
@@ -103,8 +103,8 @@ const archiveResolvers = {
     },
     async images(_, __) {
       try {
-        const images = await File.find({ _id: { $in: _.images } })
-        return images
+        const images = await File.find({ _id: { $in: _.images } });
+        return images;
       } catch (error) {
         console.error(error);
         throw error;
@@ -113,13 +113,14 @@ const archiveResolvers = {
     async favorite(item, _, context) {
       try {
         const user = getUserId(context);
-        const favorite = await Favorite.findOne({ user, archive: item._id });
-        return !!favorite;
+        const favoriteGroupList = await FavoriteGroup.find({ user, archives: { $in: [item._id] } });
+        console.log(favoriteGroupList);
+        return favoriteGroupList.length > 0;
       } catch (error) {
         console.error(error);
         throw error;
       }
-    }
+    },
   },
   Mutation: {
     async createArchive(_, args) {
@@ -137,7 +138,24 @@ const archiveResolvers = {
       checkArtistOrGroup(args.input);
 
       const defaultValue = { updateAt: Date.now(), images: [] };
-      for (const field of ['name', 'themeName', 'artist', 'group', 'address', 'detailAddress', 'lat', 'lng', 'organizer', 'startDate', 'endDate', 'openTime', 'closeTime', 'mainImage', 'phoneNumber', 'link']) {
+      for (const field of [
+        'name',
+        'themeName',
+        'artist',
+        'group',
+        'address',
+        'detailAddress',
+        'lat',
+        'lng',
+        'organizer',
+        'startDate',
+        'endDate',
+        'openTime',
+        'closeTime',
+        'mainImage',
+        'phoneNumber',
+        'link',
+      ]) {
         defaultValue[field] = null;
       }
       try {
@@ -167,7 +185,7 @@ const archiveResolvers = {
         throw error;
       }
     },
-  }
-}
+  },
+};
 
 module.exports = archiveResolvers;

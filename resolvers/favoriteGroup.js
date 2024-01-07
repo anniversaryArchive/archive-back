@@ -68,15 +68,14 @@ const favoriteGroupResolvers = {
 
     async addArchiveInFavoriteGroup(_, args, context) {
       const { id, archive } = args;
-      const archiveId = ObjectId(archive);
       try {
         await checkAuthor(id, getUserId(context));
 
         const favoriteGroup = await FavoriteGroup.findById(id);
         const archives = favoriteGroup.archives;
 
-        if (archives.findIndex(id => ObjectId(id) === archiveId) > -1) return true;
-        archives.push(archiveId);
+        if (archives.findIndex(id => id.ObjectID === archive.ObjectID) > -1) return true;
+        archives.push(archive.ObjectID);
         const updateDoc = { $set: { archives, updateAt: Date.now() } };
         const result = await FavoriteGroup.updateOne({ _id: id }, updateDoc);
         return result.modifiedCount === 1;
@@ -88,14 +87,13 @@ const favoriteGroupResolvers = {
 
     async removeArchiveInFavoriteGroup(_, args, context) {
       const { id, archive } = args;
-      const archiveId = ObjectId(archive);
       try {
         await checkAuthor(id, getUserId(context));
 
         const favoriteGroup = await FavoriteGroup.findById(id);
         const archives = [...favoriteGroup.archives];
 
-        const index = archives.findIndex(id => ObjectId(id) === archiveId);
+        const index = archives.findIndex(id => id.ObjectID === archive.ObjectID);
         if (index === -1) return true;
 
         archives.splice(index, 1);

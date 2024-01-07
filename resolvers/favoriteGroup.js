@@ -74,8 +74,8 @@ const favoriteGroupResolvers = {
         const favoriteGroup = await FavoriteGroup.findById(id);
         const archives = favoriteGroup.archives;
 
-        if (archives.findIndex(id => id.ObjectID === archive.ObjectID) > -1) return true;
-        archives.push(archive.ObjectID);
+        if (archives.findIndex(id => id === archive.ObjectID) > -1) return true;
+        archives.push(archive);
         const updateDoc = { $set: { archives, updateAt: Date.now() } };
         const result = await FavoriteGroup.updateOne({ _id: id }, updateDoc);
         return result.modifiedCount === 1;

@@ -3,6 +3,7 @@ const { gql } = require('apollo-server-express');
 const favoriteGroupTypeDefs = gql`
   type Query {
     FavoriteGroupList: [FavoriteGroup]
+    FavoriteGroup(id: ID!): FavoriteGroup
   }
 
   type FavoriteGroup {

@@ -30,6 +30,15 @@ const favoriteGroupResolvers = {
         throw error;
       }
     },
+    async FavoriteGroup(_, args) {
+      try {
+        const favorite = await FavoriteGroup.findById(args.id);
+        return favorite;
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    },
   },
 
   FavoriteGroup: {

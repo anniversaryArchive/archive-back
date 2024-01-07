@@ -93,7 +93,7 @@ const favoriteGroupResolvers = {
         const favoriteGroup = await FavoriteGroup.findById(id);
         const archives = [...favoriteGroup.archives];
 
-        const index = archives.findIndex(id => id.ObjectID === archive.ObjectID);
+        const index = archives.findIndex(id => String(id) === String(archive));
         if (index === -1) return true;
 
         archives.splice(index, 1);

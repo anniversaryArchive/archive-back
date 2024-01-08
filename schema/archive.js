@@ -3,8 +3,16 @@ const { gql } = require('apollo-server-express');
 const archiveTypeDefs = gql`
   type Query {
     archives: [Archive]
-    archive (id: ID!): Archive
-    ArchivePagination (page: Int, perPage: Int, sortField: String, sortOrder: Int, filter: FilterOption, start: Date, end: Date): ArchivePage
+    archive(id: ID!): Archive
+    ArchivePagination(
+      page: Int
+      perPage: Int
+      sortField: String
+      sortOrder: Int
+      filter: FilterOption
+      start: Date
+      end: Date
+    ): ArchivePage
   }
   type ArchivePage {
     data: [Archive]
@@ -34,10 +42,11 @@ const archiveTypeDefs = gql`
     openTime: CustomTime
     closeTime: CustomTime
     mainImage: File
-    images:[File]
+    images: [File]
     phoneNumber: String
     link: String
     favorite: Boolean
+    favoriteGroup: [FavoriteGroup]
   }
   input createArchiveInput {
     name: String!
@@ -54,7 +63,7 @@ const archiveTypeDefs = gql`
     openTime: CustomTimeInput
     closeTime: CustomTimeInput
     mainImage: ID
-    images:[ID]
+    images: [ID]
     phoneNumber: String
     link: String
   }
@@ -73,7 +82,7 @@ const archiveTypeDefs = gql`
     openTime: CustomTimeInput
     closeTime: CustomTimeInput
     mainImage: ID!
-    images:[ID]
+    images: [ID]
     phoneNumber: String
     link: String
   }
@@ -92,17 +101,17 @@ const archiveTypeDefs = gql`
     openTime: CustomTimeInput
     closeTime: CustomTimeInput
     mainImage: ID
-    images:[ID]
+    images: [ID]
     phoneNumber: String
     link: String
   }
 
   type Mutation {
-    createArchive (input: createArchiveInput!): Archive!
-    updateArchive (id: ID!, input: updateArchiveInput!): Boolean
-    patchArchive (id: ID!, input: patchArchiveInput!): Boolean
-    removeArchive (id: ID!): Boolean
+    createArchive(input: createArchiveInput!): Archive!
+    updateArchive(id: ID!, input: updateArchiveInput!): Boolean
+    patchArchive(id: ID!, input: patchArchiveInput!): Boolean
+    removeArchive(id: ID!): Boolean
   }
-`
+`;
 
-module.exports = archiveTypeDefs
+module.exports = archiveTypeDefs;

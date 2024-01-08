@@ -114,8 +114,17 @@ const archiveResolvers = {
       try {
         const user = getUserId(context);
         const favoriteGroupList = await FavoriteGroup.find({ user, archives: { $in: [item._id] } });
-        console.log(favoriteGroupList);
         return favoriteGroupList.length > 0;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
+    async favoriteGroup(item, _, context) {
+      try {
+        const user = getUserId(context);
+        const favoriteGroupList = await FavoriteGroup.find({ user, archives: { $in: [item._id] } });
+        return favoriteGroupList;
       } catch (error) {
         console.error(error);
         throw error;

@@ -118,6 +118,42 @@ const favoriteGroupResolvers = {
         throw error;
       }
     },
+
+    async updateFavoriteGroupsInArchive(_, args, context) {
+      const { archive, favoriteGroups } = args;
+      try {
+        const user = getUserId(context);
+        const orgFavoriteGroupList = await FavoriteGroup.find({ user, archives: { $in: [archive] } }); // 기존 해당 archive와 연결된 favoriteGroup List
+
+        const newFavoriteGroupIds = [...favoriteGroups]; // 새로 추가된 FavoriteGroup ID list
+        const removeArchiveFavoriteGroupIDs = []; // 제거된 FavoriteGroup ID list
+
+        for (const favoriteGroup of orgFavoriteGroupList) {
+          // 새로운 favoriteGroupIds에 있는 지 확인
+          // 있으면 newFavoriteGroupIds 에서 splice 해준다. (새로 추가된 것이 아니므로)
+          const foundIndex = newFavoriteGroupIds.findIndex(id => id === favoriteGroup._id.toString());
+          if (foundIndex > -1) {
+            newFavoriteGroupIds.splice(foundIndex, 1);
+          } else {
+            // 없으면 removeArchiveFavoriteGroupIDs 에 push 해준다. (제거해주어야 하므로)
+            removeArchiveFavoriteGroupIDs.push(favoriteGroup._id);
+          }
+        }
+
+        // 기존에 연결되어있었는데 제거된 FavoriteGroup, 해당 archive를 pull해준다.
+        await FavoriteGroup.updateMany(
+          { _id: { $in: removeArchiveFavoriteGroupIDs } },
+          { $pull: { archives: archive } },
+        );
+        // 기존에 없었는데 추가된 FavoriteGroup, 해당 archive를 push해준다.
+        await FavoriteGroup.updateMany({ _id: { $in: newFavoriteGroupIds } }, { $push: { archives: archive } });
+
+        return await FavoriteGroup.find({ user, archives: { $in: [archive] } });
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
   },
 };
 

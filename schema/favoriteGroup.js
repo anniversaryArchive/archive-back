@@ -28,6 +28,7 @@ const favoriteGroupTypeDefs = gql`
     addArchiveInFavoriteGroup(id: ID!, archive: ID!): Boolean
     removeArchiveInFavoriteGroup(id: ID!, archive: ID!): Boolean
     updateArchives(id: ID!, archives: [ID]!): Boolean
+    updateFavoriteGroupsInArchive(archive: ID!, favoriteGroups: [ID]!): [FavoriteGroup]
   }
 `;
 

@@ -141,7 +141,8 @@ const archiveResolvers = {
     async createArchive(_, args) {
       checkArtistOrGroup(args.input);
       try {
-        const archive = new Archive({ ...args.input });
+        const districtCode = DISTRICTS.find(({ name }) => args.input.sido === name).code;
+        const archive = new Archive({ ...args.input, districtCode });
         const result = await archive.save();
         return result;
       } catch (error) {
@@ -174,8 +175,10 @@ const archiveResolvers = {
       ]) {
         defaultValue[field] = null;
       }
+      const districtCode = DISTRICTS.find(({ name }) => args.input.sido === name).code;
+
       try {
-        const updateDoc = Object.assign(defaultValue, args.input);
+        const updateDoc = Object.assign(defaultValue, args.input, { districtCode });
         const result = await Archive.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) {
@@ -184,6 +187,8 @@ const archiveResolvers = {
       }
     },
     async patchArchive(_, args) {
+      const updateDoc = { ...args.input, updateAt: Date.now() };
+      if (args.input.sido) updateDoc.districtCode = DISTRICTS.find(({ name }) => args.input.sido === name).code;
       try {
         const updateDoc = { $set: { ...args.input, updateAt: Date.now() } };
         const result = await Archive.updateOne({ _id: args.id }, updateDoc);

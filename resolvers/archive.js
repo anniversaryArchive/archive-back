@@ -7,6 +7,7 @@ const { getFindDoc } = require('../common/pagination');
 const { ApolloError } = require('apollo-server-express');
 const { getUserId } = require('../utils');
 const { initDate } = require('../common/date');
+const { DISTRICTS } = require('../common/district');
 
 function checkArtistOrGroup({ artist, group }) {
   if (!artist && !group) {
@@ -129,6 +130,11 @@ const archiveResolvers = {
         console.error(error);
         throw error;
       }
+    },
+    // 지역
+    district({ districtCode }) {
+      districtCode = districtCode || 1;
+      return DISTRICTS.find(({ code }) => districtCode === code);
     },
   },
   Mutation: {

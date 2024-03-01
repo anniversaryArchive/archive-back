@@ -26,6 +26,10 @@ const archiveTypeDefs = gql`
     hour: Int
     minute: Int
   }
+  type District {
+    code: Int!
+    name: String!
+  }
   type Archive {
     _id: ID
     name: String
@@ -47,6 +51,7 @@ const archiveTypeDefs = gql`
     link: String
     favorite: Boolean
     favoriteGroup: [FavoriteGroup]
+    district: District
   }
   input createArchiveInput {
     name: String!

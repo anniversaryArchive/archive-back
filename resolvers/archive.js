@@ -170,6 +170,7 @@ const archiveResolvers = {
         'mainImage',
         'phoneNumber',
         'link',
+        'districtCode',
       ]) {
         defaultValue[field] = null;
       }

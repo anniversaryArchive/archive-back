@@ -71,6 +71,7 @@ const archiveTypeDefs = gql`
     images: [ID]
     phoneNumber: String
     link: String
+    districtCode: Int
   }
   input updateArchiveInput {
     name: String!
@@ -90,6 +91,7 @@ const archiveTypeDefs = gql`
     images: [ID]
     phoneNumber: String
     link: String
+    districtCode: Int
   }
   input patchArchiveInput {
     name: String
@@ -109,6 +111,7 @@ const archiveTypeDefs = gql`
     images: [ID]
     phoneNumber: String
     link: String
+    districtCode: Int
   }
 
   type Mutation {

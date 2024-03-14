@@ -7,6 +7,7 @@ const { getFindDoc } = require('../common/pagination');
 const { ApolloError } = require('apollo-server-express');
 const { getUserId } = require('../utils');
 const { initDate } = require('../common/date');
+const { DISTRICTS } = require('../common/district');
 
 function checkArtistOrGroup({ artist, group }) {
   if (!artist && !group) {
@@ -130,12 +131,18 @@ const archiveResolvers = {
         throw error;
       }
     },
+    // 지역
+    district({ districtCode }) {
+      districtCode = districtCode || 1;
+      return DISTRICTS.find(({ code }) => districtCode === code);
+    },
   },
   Mutation: {
     async createArchive(_, args) {
       checkArtistOrGroup(args.input);
       try {
-        const archive = new Archive({ ...args.input });
+        const districtCode = DISTRICTS.find(({ name }) => args.input.districtName === name).code;
+        const archive = new Archive({ ...args.input, districtCode });
         const result = await archive.save();
         return result;
       } catch (error) {
@@ -164,11 +171,14 @@ const archiveResolvers = {
         'mainImage',
         'phoneNumber',
         'link',
+        'districtCode',
       ]) {
         defaultValue[field] = null;
       }
+      const districtCode = DISTRICTS.find(({ name }) => args.input.districtName === name).code;
+
       try {
-        const updateDoc = Object.assign(defaultValue, args.input);
+        const updateDoc = Object.assign(defaultValue, args.input, { districtCode });
         const result = await Archive.updateOne({ _id: args.id }, updateDoc);
         return result.modifiedCount === 1;
       } catch (error) {
@@ -177,6 +187,9 @@ const archiveResolvers = {
       }
     },
     async patchArchive(_, args) {
+      const updateDoc = { ...args.input, updateAt: Date.now() };
+      if (args.input.districtName)
+        updateDoc.districtCode = DISTRICTS.find(({ name }) => args.input.districtName === name).code;
       try {
         const updateDoc = { $set: { ...args.input, updateAt: Date.now() } };
         const result = await Archive.updateOne({ _id: args.id }, updateDoc);

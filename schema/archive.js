@@ -26,6 +26,10 @@ const archiveTypeDefs = gql`
     hour: Int
     minute: Int
   }
+  type District {
+    code: Int!
+    name: String!
+  }
   type Archive {
     _id: ID
     name: String
@@ -47,6 +51,7 @@ const archiveTypeDefs = gql`
     link: String
     favorite: Boolean
     favoriteGroup: [FavoriteGroup]
+    district: District
   }
   input createArchiveInput {
     name: String!
@@ -66,6 +71,7 @@ const archiveTypeDefs = gql`
     images: [ID]
     phoneNumber: String
     link: String
+    districtName: String!
   }
   input updateArchiveInput {
     name: String!
@@ -85,6 +91,7 @@ const archiveTypeDefs = gql`
     images: [ID]
     phoneNumber: String
     link: String
+    districtName: String!
   }
   input patchArchiveInput {
     name: String
@@ -104,6 +111,7 @@ const archiveTypeDefs = gql`
     images: [ID]
     phoneNumber: String
     link: String
+    districtName: String!
   }
 
   type Mutation {
